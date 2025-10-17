@@ -1,8 +1,11 @@
-import './App.css'
+import './index.css'
+import AppRoutes from './routes/AppRoutes'
 
 function App() {
   return (
-  <h1>Root</h1>
+    <div className='p-10'> 
+        <AppRoutes />
+    </div>
   )
 }
 

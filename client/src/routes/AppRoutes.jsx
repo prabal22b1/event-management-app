@@ -1,7 +1,8 @@
-
+// AppRoutes.jsx
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
+const LandingPage = lazy(() => import('../pages/LandingPage'))
 const Home = lazy(() => import('../pages/Home'))
 const Dashboard = lazy(() => import('../pages/Dashboard'))
 const AdminDashboard = lazy(() => import('../pages/AdminDashboard'))
@@ -14,9 +15,10 @@ const NotFound = lazy(() => import('../pages/NotFound'))
 export default function AppRoutes() {
 	return (
 		<BrowserRouter>
-			<Suspense fallback={<div style={{ padding: 20 }}>Loading...</div>}>
+			<Suspense fallback={<div className='p-20'>Loading...</div>}>
 				<Routes>
-					<Route path="/" element={<Home />} />
+					<Route path="/" element={<LandingPage />} />
+					<Route path="/home" element={<Home />} />
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/admin" element={<AdminDashboard />} />
 					<Route path="/events/:id" element={<EventDetails />} />
