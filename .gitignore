@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+   __pycache__/
+   *.py[cod]
+   *$py.class
+   *.pyc
+# C extensions
+   *.so
+# Distribution / packaging
+   .Python
+   build/
+   develop-eggs/
+   dist/
+   downloads/
+   eggs/
+   .eggs/
+   lib/
+   libs/
+   bin/
+   serve/
+   wheelhouse/
+   *.egg-info/
+   .installed.cfg
+   *.egg
+   MANIFEST
+# Virtual environment
+   venv/
+   env/
+# VS Code
+   .vscode/
