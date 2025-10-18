@@ -4,5 +4,6 @@ from .registration_views import registerForEvent
 
 urlpatterns = [
     path('', manageEvent, name='manageEvent'),
+    path('<int:event_id>/', manageEventDetails, name='manageEventDetails'),
     path('<int:event_id>/register/', registerForEvent, name='registerForEvent'),
 ]
