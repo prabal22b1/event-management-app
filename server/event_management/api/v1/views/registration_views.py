@@ -61,7 +61,6 @@ def registerForEvent(request, event_id):
             registration_status = 'Confirmed'
             registration = Registration.objects.create(user_id=user_id, event_id=event_id, registration_status=registration_status)
             serializer = RegistrationSerializer(registration)
-            registration.save()
             # Update event's available seats
             event.available_seats -= 1  # Decrement available seats
             event.save()
