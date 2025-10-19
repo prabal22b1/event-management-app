@@ -10,7 +10,7 @@ const events = [
     title: 'Sunset Indie Concert',
     location: 'Harborfront Pavilion',
     date: '2025-07-18',
-    type: 'concert',
+    type: 'Concert',
     seatsLeft: 42
   },
   {
@@ -18,7 +18,7 @@ const events = [
     title: 'Laughs & Lager',
     location: 'The Back Alley Comedy Club',
     date: '2025-08-02',
-    type: 'stand up comedy',
+    type: 'Concert',
     seatsLeft: 12
   },
   {
@@ -26,7 +26,7 @@ const events = [
     title: 'Modern Perspectives: Art Show',
     location: 'Northside Gallery',
     date: '2025-09-12',
-    type: 'art show',
+    type: 'Conference',
     seatsLeft: 5
   },
   {
@@ -34,7 +34,7 @@ const events = [
     title: 'Sunday Jazz Brunch',
     location: 'Olive Tree Cafe',
     date: '2025-07-27',
-    type: 'concert',
+    type: 'Concert',
     seatsLeft: 30
   },
   {
@@ -42,7 +42,7 @@ const events = [
     title: 'Open Mic Night',
     location: 'Downtown Coffee House',
     date: '2025-08-15',
-    type: 'stand up comedy',
+    type: 'Concert',
     seatsLeft: 0
   },
   {
@@ -50,7 +50,7 @@ const events = [
     title: 'Community Theater: Hamlet',
     location: 'Riverside Playhouse',
     date: '2025-10-03',
-    type: 'theater',
+    type: 'Conference',
     seatsLeft: 20
   },
   {
@@ -58,7 +58,7 @@ const events = [
     title: 'Street Arts Festival',
     location: 'Market Square',
     date: '2025-09-20',
-    type: 'festival',
+    type: 'Workshop',
     seatsLeft: 100
   },
   {
@@ -66,7 +66,7 @@ const events = [
     title: 'Creative Coding Workshop',
     location: 'Tech Hub Studio',
     date: '2025-08-29',
-    type: 'workshop',
+    type: 'Webinar',
     seatsLeft: 8
   }
 ];

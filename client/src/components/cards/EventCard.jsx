@@ -8,23 +8,32 @@ export default function EventCard( {eventId, eventDate, eventTitle, eventLocatio
     month: 'short'
   });
 
+  const imageMap = {
+    concert: 'concert.jpg',
+    webinar: 'webinar.jpg',
+    conference: 'conference.jpg',
+    workshop: 'workshop.jpg'
+  };
+
+  const image = imageMap[(eventType || '').toLowerCase()] || 'default.jpg';
+
   return (
     <Card id={eventId} sx={{ maxWidth: 340 }}>
       <div className='relative w-fit'>
         <CardMedia
           component="img"
-          height="194"
-          image="concert.jpg"
-          alt="concert image"
-          className={`block ${isSoldOut ? 'filter grayscale opacity-50' : ''}`} // apply grayscale and opacity if sold out
+          image={image}
+          alt={`${eventType} image`}
+          className={`block ${isSoldOut ? 'filter grayscale opacity-50' : ''}`}
+          sx={{ height: 194, width: '100%', objectFit: 'cover' }}
         />
+        <span className="absolute bottom-1 left-1 text-white font-semibold bg-gray-500 bg-opacity-50 px-2 py-1 rounded text-xs">{eventType}</span>
         <span className="absolute bottom-1 right-1 text-white bg-gray-500 bg-opacity-50 px-2 py-1 rounded text-xs">
           {eventDateFormatted}
         </span>
         {isSoldOut ? (
-          // Show Sold Out badge if the event is sold out
-          <span className="absolute top-1 right-1 text-gray-800 bg-gray-400 font-semibold px-1 py-1 rounded text-sm">
-            Sold Out
+          <span className="absolute top-1 right-1 text-red-500 bg-gray-500 bg-opacity-50 font-semibold px-1 py-1 rounded text-xs">
+            Sold Out!
           </span>
         ) : null}
       </div>
