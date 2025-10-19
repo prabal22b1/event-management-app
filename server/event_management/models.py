@@ -10,7 +10,7 @@ class EventType(models.TextChoices):
 
 class Event(models.Model):
     title = models.CharField(max_length=30)
-    description = models.EmailField(max_length=50, unique=True)
+    description = models.EmailField(max_length=50)
     date = models.DateField(max_length=30)
     time = models.TimeField()
     location = models.CharField(max_length=30)

@@ -1,11 +1,11 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './index.css'
+import AppRoutes from './routes/AppRoutes'
 
 function App() {
   return (
-  <h1>Root</h1>
+    <div className='p-10 min-h-screen'> 
+        <AppRoutes />
+    </div>
   )
 }
 
