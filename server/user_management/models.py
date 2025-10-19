@@ -27,7 +27,7 @@ class UserRole(models.TextChoices):
 class User(models.Model):
     name = models.CharField(max_length=30)
     email = models.EmailField(max_length=50, unique=True)
-    username = models.CharField(max_length=30)
+    username = models.CharField(max_length=30, unique=True)
     password = models.CharField(max_length=255)
     role = models.CharField(        
         max_length=15,
