@@ -16,8 +16,7 @@ def manageEvent(request):
     """
 
     #Check if the user is authorized
-    user_id = request.data.get('user_id')
-    user = User.objects.get(id=user_id)
+    user = request.user
     
     if request.method == 'POST':
         if not get_user_role(user) == 'Organizer':
@@ -41,8 +40,7 @@ def manageEventDetails(request, event_id):
     """
 
     #Check if the user is authorized
-    user_id = request.user_id
-    user = User.objects.get(id=user_id)
+    user = request.user
     
     if request.method == 'PUT':
         if not get_user_role(user) == 'Organizer':

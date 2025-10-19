@@ -15,8 +15,8 @@ def manageRegistrationsForEvent(request, event_id):
     """
 
     #Check if the user is authorized
-    user_id = request.data.get('user_id')
-    user = User.objects.get(id=user_id)
+    user = request.user
+    
     if not get_user_role(user) == 'Attendee':
         return Response({'error': 'User is not authorized to perform this action'}, 
                         status=status.HTTP_403_FORBIDDEN)
