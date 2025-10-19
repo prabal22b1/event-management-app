@@ -1,6 +1,6 @@
 from django.urls import path
-from .event_views import manageEvent, manageEventDetails
-from .registration_views import manageRegistrationsForEvent, getEventRegistrationsForUser
+from .views.event_views import manageEvent, manageEventDetails
+from .views.registration_views import manageRegistrationsForEvent, getEventRegistrationsForUser
 
 urlpatterns = [
     path('', manageEvent, name='manageEvent'),

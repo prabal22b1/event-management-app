@@ -2,10 +2,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Event
+from event_management.models import Event
 from user_management.models import User
-from ..serializers import EventSerializer
-from ...utils import get_user_role
+from event_management.serializers import EventSerializer
+from utils import get_user_role
 
 
 @api_view(['POST', 'GET'])
@@ -20,7 +20,7 @@ def manageEvent(request):
     
     if request.method == 'POST':
         if not get_user_role(user) == 'Organizer':
-        return Response({'error': 'User is not authorized to perform this action'}, 
+            return Response({'error': 'User is not authorized to perform this action'}, 
                         status=status.HTTP_403_FORBIDDEN)
         try:
             event = Event.objects.create(title=request.data.title, description=request.data.description,
@@ -44,7 +44,7 @@ def manageEventDetails(request, event_id):
     
     if request.method == 'PUT':
         if not get_user_role(user) == 'Organizer':
-        return Response({'error': 'User is not authorized to perform this action'}, 
+            return Response({'error': 'User is not authorized to perform this action'}, 
                         status=status.HTTP_403_FORBIDDEN)
 
         try:
