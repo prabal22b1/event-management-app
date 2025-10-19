@@ -62,12 +62,12 @@ class User(AbstractBaseUser,PermissionsMixin):
     registered_on = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)   
     is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(default=timezone.now)
+    # date_joined = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username','name']
+    REQUIRED_FIELDS = ['username']
 
 
     def __str__(self):
