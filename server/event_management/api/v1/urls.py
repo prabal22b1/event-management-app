@@ -1,9 +1,10 @@
 from django.urls import path
-from .event_views import event_list
-from .registration_views import registerForEvent
+from .event_views import manageEvent, manageEventDetails
+from .registration_views import manageRegistrationsForEvent, getEventRegistrationsForUser
 
 urlpatterns = [
     path('', manageEvent, name='manageEvent'),
     path('<int:event_id>/', manageEventDetails, name='manageEventDetails'),
-    path('<int:event_id>/register/', registerForEvent, name='registerForEvent'),
+    path('<int:event_id>/register/', manageRegistrationsForEvent, name='manageRegistrationsForEvent'),
+    path('registrations/user/<int:user_id>/', getEventRegistrationsForUser, name='getEventRegistrationsForUser')
 ]

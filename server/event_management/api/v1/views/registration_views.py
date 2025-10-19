@@ -5,29 +5,11 @@ from rest_framework import status
 from ..models import Registration, Event
 from user_management.models import User
 from ..serializers import RegistrationSerializer
-from ...utils import get_user_role
-
-
-def is_event_sold_out(event):
-    """
-    Check if the event is sold out.
-    Return True if sold out, otherwise False.
-    """
-    available_seats = event.available_seats
-    return available_seats <= 0
-
-def is_user_already_registered(user_id, event_id):
-    """
-    Check if the user is already registered for the event.
-    Return True if registered, otherwise False.
-    """
-    return Registration.objects.filter(user_id=user_id, event_id=event_id).exists()
-
-
+from ...utils import get_user_role, is_event_sold_out, is_user_already_registered
 
 @api_view(['POST', 'PUT'])
 @permission_classes([IsAuthenticated])
-def registerForEvent(request, event_id):
+def manageRegistrationsForEvent(request, event_id):
     """
     Handle POST and PUT requests for event registrations.
     """
@@ -45,17 +27,16 @@ def registerForEvent(request, event_id):
         except Event.DoesNotExist:
             return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
             
-        # Check if event has available seats
-        available_seats = event.available_seats 
-        if available_seats <= 0:
+        # Check if event has available seats   
+        if is_event_sold_out(event):
             return Response({'error': 'Event is sold out'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             # Check existing registration
-            existing_registration = Registration.objects.get(user_id=user_id, event_id=event_id)
-            return Response({'error': 'You are already registered for the event'}, status=status.HTTP_400_BAD_REQUEST)
+            if is_user_already_registered(user_id, event_id):
+                return Response({'error': 'You are already registered for the event'}, status=status.HTTP_400_BAD_REQUEST)
         except Registration.DoesNotExist:
             # Create a new registration record
             registration_status = 'Confirmed'
@@ -80,3 +61,34 @@ def registerForEvent(request, event_id):
             return Response(serializer.data, status=200)
         except Registration.DoesNotExist:
             return Response({'error': 'Registration not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getEventRegistrationsForUser(request, user_id):
+    """
+    Get all events a specific user is registered for.
+    Returns only event title and event_type.
+    """
+
+    if request.method == 'GET': 
+        try:
+            user = User.objects.get(id=user_id)
+        except Event.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            # Fetch registrations for the specific user
+            registrations = Registration.objects.filter(user_id=id)
+            # Extract and compile event titles and types
+            events_data = []
+            for registration in registrations:
+                event_id = registration.event_id
+                event = Event.objects.get(event_id)
+                events_data.append({
+                    'title': event.title,
+                    'event_type': event.event_type,
+                })
+            return Response(events_data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
