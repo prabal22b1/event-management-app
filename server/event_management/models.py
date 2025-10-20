@@ -19,6 +19,12 @@ class Event(models.Model):
         max_length=15,
         choices=EventType.choices,
         default=EventType.WEBINAR)
+    created_by = models.ForeignKey(
+        User,
+        null=True, 
+        on_delete=models.SET_NULL,
+        related_name="organizer"
+    )
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated_on = models.DateTimeField(auto_now_add=True)
 
