@@ -1,4 +1,4 @@
-
+from event_management.models import Registration
 
 def get_user_role(user):
     """
