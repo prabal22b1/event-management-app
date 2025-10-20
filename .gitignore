@@ -50,3 +50,6 @@
     *.njsproj
     *.sln
     *.sw?
+
+# DB
+   server/db.sqlite3
