@@ -39,7 +39,7 @@ def manageEvent(request):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
     
-    elif request.method == 'GET': #if GET request
+    elif request.method == 'GET': #if GET request (authentication not required)
         try:
             events = Event.objects.all()
             if not events.exists():
@@ -72,10 +72,11 @@ def manageEventDetails(request, event_id):
     Handle PUT and GET requests for event details.
     """
     
-    #Check if the user is authorized
-    user = request.user
-    
     if request.method == 'PUT':
+        
+        #Check if the user is authorized
+        user = request.user
+
         if not request.user.is_authenticated:
             return Response({'error': 'User is not authenticated to perform this action'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -97,6 +98,34 @@ def manageEventDetails(request, event_id):
             serializer = EventSerializer(updated_event)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Handle GET request for event details by event_id (authentication not required)
+    elif request.method == 'GET':
+        try:
+            # Validate event_id 
+            try:
+                event_id = int(event_id)
+                if not event_id:
+                    raise ValueError("Event ID cannot be zero/Invalid event ID")
+            except ValueError:
+                return Response({'error': 'Invalid event ID format'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Attempt to retrieve the event from the database using event_id
+            try:
+                event = Event.objects.get(id=event_id)
+            except Event.DoesNotExist:
+                return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Serialize the event data for response
+            serializer = EventSerializer(event)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    else:
+        return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 
