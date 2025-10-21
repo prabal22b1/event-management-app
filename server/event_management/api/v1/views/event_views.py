@@ -24,7 +24,7 @@ def manageEvent(request):
             return Response({'error': 'User is not authenticated to perform this action'}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Check if user is Organizer, otherwise send 403 error  
-        if not get_user_role(user) == 'Organizer':
+        if get_user_role(user) != 'Organizer':
             return Response({'error': 'User is not authorized to perform this action'}, 
                         status=status.HTTP_403_FORBIDDEN)
         try:
@@ -43,26 +43,32 @@ def manageEvent(request):
         try:
             events = Event.objects.all()
             if not events.exists():
-                return Response({'message': 'No events found'}, status=status.HTTP_200_OK) #If no events found, send message
+                return Response({[]}, status=status.HTTP_200_OK) #If no events found, send empty array
             
             # If events found, filter them with date older than current date and time to excluse expired events
             current_date = timezone.now()
             events = events.filter(date__gte=current_date.date())
 
+            # Serialize the data
+            serializer = EventSerializer(events, many=True)
+
             # Return only required fields for the homepage
-            events_data = []
-            for event in events:
-                events_data.append({
-                    'event_id': event.id,
-                    'title': event.title,
-                    'date': event.date,
-                    'location': event.location,
-                    'event_type': event.event_type,
-                    'available_seats': event.available_seats
-                })
-            return Response(events_data, status=status.HTTP_200_OK) #Send 200 OK with events data
+            required_fields = ['id', 'title', 'date', 'location', 'event_type', 'available_seats']
+            events_data = [
+                {field: event[field] for field in required_fields} 
+                for event in serializer.data
+                ]
+
+            #Send 200 OK with events data and count
+            return Response({
+                    'events':events_data, 
+                    'count': len(events_data) 
+                }, 
+                status=status.HTTP_200_OK) 
+        
+        #Send 400 error in case of any exception
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) #Send 400 error in case of any exception
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) 
 
 
 
@@ -80,7 +86,7 @@ def manageEventDetails(request, event_id):
         if not request.user.is_authenticated:
             return Response({'error': 'User is not authenticated to perform this action'}, status=status.HTTP_401_UNAUTHORIZED)
 
-        if not get_user_role(user) == 'Organizer':
+        if get_user_role(user) != 'Organizer':
             return Response({'error': 'User is not authorized to perform this action'}, 
                         status=status.HTTP_403_FORBIDDEN)
 
@@ -123,9 +129,58 @@ def manageEventDetails(request, event_id):
     
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-    else:
-        return Response({'error': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getEventsForOrganizer(request, user_id):
+    """
+    Retrieve all events created by a specific organizer.
+    """
+    try:
+        # Validate user_id
+        try:
+            user_id = int(user_id)
+            if not user_id:
+                raise ValueError("User ID cannot be zero/Invalid user ID")
+        except ValueError:
+            return Response({'error': 'Invalid user ID format'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if the organizer exists
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'User id not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        #Verify the user has organizer role
+        if get_user_role(user) != 'Organizer':
+            return Response({'error': 'User is not an organizer'}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            organizer = user
+
+        # Retrieve all the events created by the Organizer
+        # Get current datetime and filter events that are upcoming
+        current_datetime = timezone.now()
+        events = Event.objects.filter(
+            created_by=organizer,
+            date__gte=current_datetime.date()
+            ).order_by('-date', '-time')
+
+        # Serialize the data
+        serializer = EventSerializer(events, many=True)
+
+        # Return only required fields for the homepage
+        required_fields = ['id', 'title', 'date', 'location', 'event_type', 'available_seats']
+        events_data = [
+                {field: event[field] for field in required_fields} 
+                for event in serializer.data
+            ]
+
+        return Response({
+                'events': events_data,
+                'count': len(events_data)
+            },
+            status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
