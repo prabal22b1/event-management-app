@@ -2,6 +2,7 @@
 
 import { Link } from 'react-router-dom';
 import EventCard from '../components/cards/EventCard'
+import LogoutButton from '../components/LogoutButton';
 
 const events = [
   // hard coded list of events
@@ -74,8 +75,10 @@ const events = [
 
 const Home = () => {
   return (
-    <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'>
-      {events.map((event) => // mapping through events list
+    <div className="min-h-screen">
+      <LogoutButton />
+      <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'>
+         {events.map((event) => // mapping through events list
         event.seatsLeft > 0 ? (
           // Link to event details page if it's not sold out
           <Link key={event.id} to={`/events/${event.id}`}> 
@@ -101,7 +104,8 @@ const Home = () => {
             isSoldOut={true}
           />
         )
-      )}
+       )}
+    </div>
     </div>
   )
 }
