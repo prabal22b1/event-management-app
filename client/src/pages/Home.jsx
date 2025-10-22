@@ -1,87 +1,43 @@
-// Home.jsx
-
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import EventCard from '../components/cards/EventCard'
+import EventCard from '../components/cards/EventCard';
 import NavBar from '../components/bars/NavBar';
 import SearchBar from '../components/bars/SearchBar';
-import { useState } from 'react';
 import { Pagination } from '@mui/material';
-
+import axios from 'axios';
 const Home = () => {
-  const events = [
-    // hard coded list of events
-    {
-      id: 1,
-      title: 'Sunset Indie Concert',
-      location: 'Harborfront Pavilion',
-      date: '2025-07-18',
-      type: 'Concert',
-      seatsLeft: 42
-    },
-    {
-      id: 2,
-      title: 'Laughs & Lager',
-      location: 'The Back Alley Comedy Club',
-      date: '2025-08-02',
-      type: 'Concert',
-      seatsLeft: 12
-    },
-    {
-      id: 3,
-      title: 'Modern Perspectives: Art Show',
-      location: 'Northside Gallery',
-      date: '2025-09-12',
-      type: 'Conference',
-      seatsLeft: 5
-    },
-    {
-      id: 4,
-      title: 'Sunday Jazz Brunch',
-      location: 'Olive Tree Cafe',
-      date: '2025-07-27',
-      type: 'Concert',
-      seatsLeft: 30
-    },
-    {
-      id: 5,
-      title: 'Open Mic Night',
-      location: 'Downtown Coffee House',
-      date: '2025-08-15',
-      type: 'Concert',
-      seatsLeft: 0
-    },
-    {
-      id: 6,
-      title: 'Community Theater: Hamlet',
-      location: 'Riverside Playhouse',
-      date: '2025-10-03',
-      type: 'Conference',
-      seatsLeft: 20
-    },
-    {
-      id: 7,
-      title: 'Street Arts Festival',
-      location: 'Market Square',
-      date: '2025-09-20',
-      type: 'Workshop',
-      seatsLeft: 100
-    },
-    {
-      id: 8,
-      title: 'Creative Coding Workshop',
-      location: 'Tech Hub Studio',
-      date: '2025-08-29',
-      type: 'Webinar',
-      seatsLeft: 8
-    }
-  ];
-
   const [nameSearchTerm, setNameSearchTerm] = useState('');
   const [dateSearchTerm, setDateSearchTerm] = useState(null);
   const [locationSearchTerm, setLocationSearchTerm] = useState('');
-  const [eventList, setEvents] = useState(events);
+  const [events, setEvents] = useState([]); // Initialize events as an empty array
   const [currentPage, setCurrentPage] = useState(1);
+  const [error, setError] = useState(null);
   const eventsPerPage = 8;
+
+
+  const getAuthToken = () => localStorage.getItem('accessToken');
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = getAuthToken();
+        const response = await axios.get("http://localhost:8000/api/v1/events/", {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (Array.isArray(response.data.events)) {
+          setEvents(response.data.events); // Validate the response data type
+        } else {
+          throw new Error('Response data is not an array');
+        }
+      } catch (error) {
+        setError(error);
+        console.error("Error fetching events:", error);
+      }
+    };
+    fetchEvents();
+  }, []);
 
   const handleNameSearch = (event) => {
     setNameSearchTerm(event.target.value);
@@ -95,70 +51,67 @@ const Home = () => {
     setLocationSearchTerm(event.target.value);
   };
 
-  const filteredEvents = events.filter(e => {
+  const filteredEvents = Array.isArray(events) ? events.filter(e => {
     const eventDate = new Date(e.date).toISOString().slice(0, 10);
     const searchDate = dateSearchTerm ? new Date(dateSearchTerm.getTime() - (dateSearchTerm.getTimezoneOffset() * 60000)).toISOString().slice(0, 10) : null;
+    
     return (
       e.title.toLowerCase().includes(nameSearchTerm.toLowerCase()) &&
       (!dateSearchTerm || eventDate === searchDate) &&
       e.location.toLowerCase().includes(locationSearchTerm.toLowerCase())
     );
-  });
+  }) : [];
 
-  // Pagination logic specifically for filtered events
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
-
   const handlePageChange = (event, value) => setCurrentPage(value);
-
+  if (error) {
+    return <div>Error fetching events: {error.message}</div>;
+  }
   return (
     <div>
-      <div style={{ paddingBottom: '20px' }}>
-        <NavBar />
-      </div>
+      <NavBar />
       <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '10px', padding: '0 20px', marginBottom: '20px' }}>
         <SearchBar label="Search Name" searchTerm={nameSearchTerm} onSearch={handleNameSearch} type="text" />
         <SearchBar label="Search Date" searchTerm={dateSearchTerm} onSearch={handleDateSearch} type="date" />
         <SearchBar label="Search Location" searchTerm={locationSearchTerm} onSearch={handleLocationSearch} type="text" />
       </div>
       <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 pl-5 pr-5'>
-        {currentEvents.map((event, index) => // mapping through events list
-          event.seatsLeft > 0 ? (
-            // Link to event details page if it's not sold out
-            <Link key={index} to={`/events/${index}`}>
+        {currentEvents.map((event) => (
+          event.available_seats > 0 ? (
+            <Link key={event.id} to={`/events/${event.id}`}>
               <EventCard
-                key={index}
-                eventId={index}
+                eventId={event.id}
                 eventTitle={event.title}
                 eventLocation={event.location}
                 eventDate={event.date}
-                eventType={event.type}
+                eventType={event.event_type}
                 isSoldOut={false}
               />
             </Link>
           ) : (
-            // Show EventCard without link if sold out
+            <Link key={event.id} to={`/events/${event.id}`}>
             <EventCard
-              key={index}
-              eventId={index}
+              key={event.id}
+              eventId={event.id}
               eventTitle={event.title}
               eventLocation={event.location}
               eventDate={event.date}
-              eventType={event.type}
+              eventType={event.event_type}
               isSoldOut={true}
             />
+            </Link>
           )
-        )}
+        ))}
       </div>
       <Pagination
-          count={Math.ceil(filteredEvents.length / eventsPerPage)}
-          page={currentPage}
-          onChange={handlePageChange}
-          style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}
-        />
+        count={Math.ceil(filteredEvents.length / eventsPerPage)}
+        page={currentPage}
+        onChange={handlePageChange}
+        style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}
+      />
     </div>
-  )
+  );
 }
-
 export default Home;

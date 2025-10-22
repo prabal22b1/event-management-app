@@ -18,7 +18,7 @@ export default function EventCard( {eventId, eventDate, eventTitle, eventLocatio
   const image = imageMap[(eventType || '').toLowerCase()] || 'default.jpg';
 
   return (
-    <Card id={eventId} sx={{ maxWidth: 340 }}>
+    <Card id={eventId} sx={{ maxWidth: 300 }}>
       <div className='relative w-fit'>
         <CardMedia
           component="img"
