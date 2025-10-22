@@ -1,6 +1,7 @@
 // AppRoutes.jsx
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import ProtectedRoute from '../components/ProtectedRoute'
 
 const LandingPage = lazy(() => import('../pages/LandingPage'))
 const Home = lazy(() => import('../pages/Home'))
@@ -19,17 +20,16 @@ export default function AppRoutes() {
 			<Suspense fallback={<div className='p-20'>Loading...</div>}>
 				<Routes>
 					<Route path="/" element={<LandingPage />} />
-					<Route path="/home" element={<Home />} />
+					<Route path="/home" element={<ProtectedRoute ><Home /> </ProtectedRoute>} />
 
 					<Route path="/login" element={<Login />} />
 					<Route path="/signup" element={<SignUp />} />
-
 					
-					<Route path="/dashboard" element={<Dashboard />} />
+					<Route path="/dashboard" element={<ProtectedRoute requiredRole='Organizer'><Dashboard /></ProtectedRoute>} />
 					<Route path="/admin" element={<AdminDashboard />} />
 					
-					<Route path="/dashboard/new-event" element={<NewEvent />} />
-					<Route path="/events/:id" element={<EventDetails />} />
+					<Route path="/dashboard/new-event" element={<ProtectedRoute requiredRole='Organizer'> <NewEvent /></ProtectedRoute>}/>
+					<Route path="/events/:id" element={<ProtectedRoute><EventDetails /></ProtectedRoute>} />
 					
 					<Route path="/unauthorized" element={<Unauthorized />} />
 					<Route path="/404" element={<NotFound />} />
