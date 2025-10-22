@@ -1,7 +1,9 @@
 import { useForm } from 'react-hook-form';
 import Input from '@mui/material/Input';
+import { Link } from '@mui/material';
 import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ onSubmit, loading }) => {
   const {
@@ -9,6 +11,8 @@ const LoginForm = ({ onSubmit, loading }) => {
     handleSubmit,
     formState: { errors }
   } = useForm();
+
+  const navigate = useNavigate();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -37,15 +41,20 @@ const LoginForm = ({ onSubmit, loading }) => {
           error={!!errors.password}
         />
       </div>
-
-      <Button
-        type="submit"
-        variant="contained"
-        fullWidth
-        disabled={loading}
-      >
-        {loading ? 'Logging in...' : 'Login'}
-      </Button>
+      <br></br>
+       <Link style = {{marginTop: '10px', marginBottom: '10px'}} component="button" variant="body2" onClick={() => navigate('/signup')}>
+        Not Registered? Click here to sign up.
+      </Link>
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+        <Button
+          type="submit"
+          variant="contained"
+          width = '30px'
+          disabled={loading}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </Button>
+        </div>
     </form>
   );
 };

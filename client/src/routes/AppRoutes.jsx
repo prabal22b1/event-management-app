@@ -13,6 +13,7 @@ const SignUp = lazy(() => import('../pages/SignUp'))
 const Unauthorized = lazy(() => import('../pages/Unauthorized'))
 const NotFound = lazy(() => import('../pages/NotFound'))
 const NewEvent = lazy(() => import('../pages/NewEvent'))
+const Registrations = lazy(() => import('../pages/Registrations'))
 
 export default function AppRoutes() {
 	return (
@@ -21,12 +22,12 @@ export default function AppRoutes() {
 				<Routes>
 					<Route path="/" element={<LandingPage />} />
 					
-					<Route path="/home" element={<ProtectedRoute ><Home /> </ProtectedRoute>} />
+					<Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 
 					<Route path="/login" element={<Login />} />
 					<Route path="/signup" element={<SignUp />} />
 					
-					<Route path="/dashboard" element={<ProtectedRoute requiredRole='Organizer'><Dashboard /></ProtectedRoute>} />
+					<Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 					<Route path="/admin" element={<AdminDashboard />} />
 					
 					<Route path="/dashboard/new-event" element={<ProtectedRoute requiredRole='Organizer'> <NewEvent /></ProtectedRoute>}/>

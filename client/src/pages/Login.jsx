@@ -29,6 +29,8 @@ const Login = () => {
     const result= await login(data);
     
     if(result.success){
+      sessionStorage.setItem("user_role", result.user.role)
+      sessionStorage.setItem("user_id", result.user.id)
       if (result.user.role === 'Admin') {
         navigate('/admin');
       } else if (result.user.role === 'Organizer') {

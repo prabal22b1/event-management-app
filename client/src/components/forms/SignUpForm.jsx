@@ -53,7 +53,7 @@ const SignUpForm = ({ onSubmit, loading }) => {
         <Input
           fullWidth
           type="password"
-          {...register("password", { 
+          {...register("password", {
             required: "Password is required",
             minLength: {
               value: 8,
@@ -75,15 +75,17 @@ const SignUpForm = ({ onSubmit, loading }) => {
           <MenuItem value="Organizer">Organizer</MenuItem>
         </Select>
       </div>
-
-      <Button
-        type="submit"
-        variant="contained"
-        fullWidth
-        disabled={loading}
-      >
-        {loading ? 'Signing up...' : 'Sign Up'}
-      </Button>
+      <br></br>
+      <div style={{display: 'flex', justifyContent: 'center'}}>
+        <Button
+          width='30px'
+          type="submit"
+          variant="contained"
+          disabled={loading}
+        >
+          {loading ? 'Signing up...' : 'Sign Up'}
+        </Button>
+      </div>
     </form>
   );
 };

@@ -158,7 +158,6 @@ const Home = () => {
           style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}
         />
     </div>
-    </div>
   )
 }
 
