@@ -17,15 +17,15 @@ export const AuthProvider= ({children}) => {
     const [loading,setLoading]= useState(true);
     const [isAuthenticated,setIsAuthenticated]= useState(false);
 
-    useeffect(() => {
+    useEffect(() => {
         checkAuthStatus();
     },[]);
     
     const checkAuthStatus= async() => {
         try{
             setLoading(true);
-            const response= await api.get('auth/me/');
-            setUser(response.data);
+            const response= await api.get('/users/auth/me/');
+            setUser(response.data.user);
             setIsAuthenticated(true);
         }catch(error){
             console.error("Error checking auth status:",error);
@@ -46,7 +46,7 @@ export const AuthProvider= ({children}) => {
             console.error("Login error:",error);
             return {
                 success:false,
-                error: error.response?.data?.detail||error.response?.data?.message || "Login failed"};
+                error: error.response?.data?.detail||error.response?.data?.message || 'Login failed'};
         }
     };
 
@@ -63,7 +63,7 @@ export const AuthProvider= ({children}) => {
 
     const register= async(userData) => {
         try{
-            const response= await api.post('/users/auth/register/',userData);
+            const response= await api.post('/users/register/',userData);
 
             return {success:true,message:"Registration successful. Please log in."};
         }catch(error){
@@ -86,7 +86,7 @@ export const AuthProvider= ({children}) => {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 }

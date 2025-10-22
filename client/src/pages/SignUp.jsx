@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useAuth} from '../contexts/AuthContext';    
+import {useAuth} from '../contexts/AuthContext';   
 import axios from 'axios';
 import SignUpForm from '../components/forms/SignUpForm';
+
 import Alert from '@mui/material/Alert';
 
 const SignUp = () => {
@@ -31,16 +32,17 @@ const SignUp = () => {
                 }, 2000);}
         else{
 
-          if(typeof result.error === 'object'){
+        if(typeof result.error === 'object'){
             if(result.error.username){
-            setError(`Username: ${result.error.username[0]}`);
-          }else if(result.error.email){
-            setError(`Email: ${result.error.email[0]}`);
-          }else if(result.error.detail){
-            setError(result.error.detail);
+              setError(`Username: ${result.error.username[0]}`);
+            }else if(result.error.email){
+              setError(`Email: ${result.error.email[0]}`);
+            }else if(result.error.detail){
+              setError(result.error.detail);
+            }else{
+              setError(Object.values(result.error)[0]?.[0] || 'Registration failed');
+            }
           }else{
-            setError(Object.values(result.error)[0]?.[0] || 'Registration failed');
-        }}else{
            setError(result.error);
           }}
 

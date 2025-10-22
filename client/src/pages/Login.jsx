@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+
 // import LoginForm from '../components/forms/LoginForm';
 import  LoginForm from '../components/forms/LogInForm';
 import Alert from '@mui/material/Alert';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from  '../contexts/AuthContext';
 
 const Login = () => {
   const [error, setError] = useState('');
@@ -35,8 +35,8 @@ const Login = () => {
         navigate('/dashboard');
       } else {
         navigate('/home');
-      }}
-    else{
+      }
+    }else{
       setError(result.error);
     }
     setLoading(false);

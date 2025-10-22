@@ -20,6 +20,7 @@ export default function AppRoutes() {
 			<Suspense fallback={<div className='p-20'>Loading...</div>}>
 				<Routes>
 					<Route path="/" element={<LandingPage />} />
+					
 					<Route path="/home" element={<ProtectedRoute ><Home /> </ProtectedRoute>} />
 
 					<Route path="/login" element={<Login />} />

@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../contexts/AuthContext';
 
+
 const LogoutButton = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();

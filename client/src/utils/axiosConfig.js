@@ -21,7 +21,7 @@ api.interceptors.response.use(response => {
   const originalRequest = error.config;
 
   // If the error is 401 Unauthorized, try to refresh the token
-  if (error.response && error.response?.status === 401 && !originalRequest._retry) {
+  if (error.response?.status === 401 && !originalRequest._retry) {
     originalRequest._retry = true;
     try {
      const refreshResponse= await axios.post('http://localhost:8000/api/v1/token/refresh/', {}, 
