@@ -5,9 +5,7 @@ import EventCard from '../components/cards/EventCard'
 import NavBar from '../components/bars/NavBar';
 import SearchBar from '../components/bars/SearchBar';
 import { useState } from 'react';
-
-
-
+import { Pagination } from '@mui/material';
 
 const Home = () => {
   const events = [
@@ -82,6 +80,8 @@ const Home = () => {
   const [dateSearchTerm, setDateSearchTerm] = useState(null);
   const [locationSearchTerm, setLocationSearchTerm] = useState('');
   const [eventList, setEvents] = useState(events);
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 8;
 
   const handleNameSearch = (event) => {
     setNameSearchTerm(event.target.value);
@@ -105,7 +105,12 @@ const Home = () => {
     );
   });
 
+  // Pagination logic specifically for filtered events
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
+  const handlePageChange = (event, value) => setCurrentPage(value);
 
   return (
     <div>
@@ -117,8 +122,8 @@ const Home = () => {
         <SearchBar label="Search Date" searchTerm={dateSearchTerm} onSearch={handleDateSearch} type="date" />
         <SearchBar label="Search Location" searchTerm={locationSearchTerm} onSearch={handleLocationSearch} type="text" />
       </div>
-      <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 pl-5'>
-        {filteredEvents.map((event, index) => // mapping through events list
+      <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 pl-5 pr-5'>
+        {currentEvents.map((event, index) => // mapping through events list
           event.seatsLeft > 0 ? (
             // Link to event details page if it's not sold out
             <Link key={index} to={`/events/${index}`}>
@@ -146,6 +151,12 @@ const Home = () => {
           )
         )}
       </div>
+      <Pagination
+          count={Math.ceil(filteredEvents.length / eventsPerPage)}
+          page={currentPage}
+          onChange={handlePageChange}
+          style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}
+        />
     </div>
   )
 }
