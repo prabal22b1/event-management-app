@@ -13,6 +13,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils import timezone
 from django.conf import settings
 import json
+from django.conf import settings
 
 
 @api_view(['POST'])
