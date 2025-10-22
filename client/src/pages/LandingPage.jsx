@@ -1,47 +1,33 @@
 // LandingPage.jsx
-import React from 'react';
-import { Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+const LandingPage = () => {
 
+  const handleClick = (e) => {
+    e.preventDefault()
+    // redirect to login page when clicked
+    window.location.href = '/login'
+  }
 
+  // container tailwind styles to cover full screen with image background and button at bottom right
+  const containerStyle = "relative w-full h-screen overflow-hidden"
 
-function LandingPage() {
-  const navigate = useNavigate();
+  // image styles to cover full container
+  const imageStyle = "absolute top-0 left-0 w-full h-full object-cover"
 
-  const handleButtonClick = () => {
-    // Navigate to the home page
-    navigate("/home")
-  };
-
-
+  // button styles to position at bottom right with hover effects
+  const buttonStyle = "absolute bottom-[25%] right-[30%] z-20 px-5 py-3 border-none rounded-3xl bg-orange-700 cursor-pointer text-black font-semibold text-sm hover:bg-black hover:text-white transition"
 
   return (
-    <div style={{ backgroundImage: 'url("eventify-background.png")',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    height: '100vh',
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    flexDirection: 'column', 
-    gap: '20px'}}>
-      <Typography variant="h4" color="secondary" gutterBottom>
-        Welcome to Eventify
-      </Typography>
-      <Typography variant="h6" color="textSecondary">
-        We turn plans into experiences.
-      </Typography>
-      <Button 
-        variant="contained" 
-        color="primary" 
-        size="large"
-        onClick={handleButtonClick}
-        style={{ backgroundColor: '#FF5733', color: '#fff' }}
-      >
-        Go to Home Page
-      </Button>
+    <div className={containerStyle}>
+      <img
+        src="landing-image.png"
+        alt="Landing"
+        className={imageStyle}
+      />
+      <button className={buttonStyle} onClick={handleClick} aria-label="Browse upcoming events">
+        Browse upcoming events
+      </button>
     </div>
-  );
+  )
 }
 
 export default LandingPage

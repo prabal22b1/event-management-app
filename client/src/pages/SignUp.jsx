@@ -50,7 +50,7 @@ const SignUp = () => {
     };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+    <div className="flex justify-center items-center p-16">
       <div className="p-8 bg-white rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
         {success ? (

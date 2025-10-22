@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Set a light pinkish background color for the entire app */
+body,
+html,
+#root {
+    background-color: #f1deda;
+}
