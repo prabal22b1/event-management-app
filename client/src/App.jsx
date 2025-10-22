@@ -5,7 +5,7 @@ import './App.css'
 function App() {
   return (
     <AuthProvider>
-      <div className='p-10 min-h-screen'> 
+      <div className='min-h-screen'> 
         <AppRoutes />
       </div>
     </AuthProvider>
