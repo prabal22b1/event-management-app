@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SignUpForm from '../components/forms/SignUpForm';
 import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 const SignUp = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const handleSubmit = async (data) => {
     setLoading(true);
@@ -27,7 +30,9 @@ const SignUp = () => {
       );
 
       setSuccess('Registration successful! Redirecting to login...');
-      
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+
       setTimeout(() => {
         navigate('/login', { 
           replace: true,
@@ -40,47 +45,59 @@ const SignUp = () => {
     } catch (err) {
       console.error('Registration error:', err);
       
+      let errorMessage = 'Registration failed. Please try again.'
       if (err.response?.data) {
         const errorData = err.response.data;
         
         if (typeof errorData === 'object') {
           if (errorData.username) {
-            setError(`Username: ${errorData.username[0]}`);
+            errorMessage = `Username: ${errorData.username[0]}`;
           } else if (errorData.email) {
-            setError(`Email: ${errorData.email[0]}`);
+            errorMessage = `Email: ${errorData.email[0]}`
           } else if (errorData.detail) {
-            setError(errorData.detail);
+            errorMessage = errorData.detail;
           } else {
-            setError(Object.values(errorData)[0]?.[0] || 'Registration failed');
+            errorMessage = Object.values(errorData)[0]?.[0] || 'Registration failed. Please try again';
           }
         } else {
-          setError(errorData);
+          errorMessage = errorData;
         }
-      } else {
-        setError('Registration failed. Please try again.');
-      }
+      } 
+      setError(errorMessage);
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     } finally {
       setLoading(false);
     }
   };
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+    setError('');
+    setSuccess(''); 
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="p-8 bg-white rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-        {success ? (
-          <Alert severity="success" className="mb-4">
-            {success}
-          </Alert>
-        ) : error ? (
-          <Alert severity="error" className="mb-4">
-            {error}
-          </Alert>
-        ) : null}
-        <SignUpForm 
+       <SignUpForm 
           onSubmit={handleSubmit}
           loading={loading}
         />
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={4000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert 
+            onClose={handleCloseSnackbar} 
+            severity={snackbarSeverity} 
+            sx={{ width: '100%' }}
+          >
+            {success || error}
+          </Alert>
+        </Snackbar>
       </div>
     </div>
   );
