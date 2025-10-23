@@ -15,6 +15,8 @@ const SignUp = lazy(() => import('../pages/SignUp'))
 const Unauthorized = lazy(() => import('../pages/Unauthorized'))
 const NotFound = lazy(() => import('../pages/NotFound'))
 const NewEvent = lazy(() => import('../pages/NewEvent'))
+const EditEvent = lazy(() => import('../pages/EditEvent'))
+
 
 export default function AppRoutes() {
 	return (
@@ -22,18 +24,21 @@ export default function AppRoutes() {
 			<Suspense fallback={<Spinner />}>
 				<Routes>
 					<Route path="/" element={<LandingPage />} />
-					
+
 					<Route path="/home" element={<ProtectedRoute requiredRole={['Attendee']}><><NavBar /><Home /></></ProtectedRoute>} />
 
 					<Route path="/login" element={<Login />} />
 					<Route path="/signup" element={<SignUp />} />
-					
+
 					<Route path="/dashboard" element={<ProtectedRoute requiredRole={['Attendee', 'Organizer']}><><NavBar /><Dashboard /></></ProtectedRoute>} />
+					
 					<Route path="/admin" element={<ProtectedRoute requiredRole={['Admin']}><><NavBar /><AdminDashboard /></></ProtectedRoute>} />
 					
+					<Route path="/dashboard/edit-event/:id" element={<ProtectedRoute requiredRole={['Organizer']}><><NavBar /><EditEvent /></></ProtectedRoute>} />
+
 					<Route path="/dashboard/new-event" element={<ProtectedRoute requiredRole={['Organizer']}><><NavBar /><NewEvent /></></ProtectedRoute>} />
 					<Route path="/events/:id" element={<ProtectedRoute requiredRole={['Attendee', 'Organizer']}><><NavBar /><EventDetails /></></ProtectedRoute>} />
-					
+
 					<Route path="/unauthorized" element={<><NavBar /><Unauthorized /></>} />
 					<Route path="/404" element={<><NavBar /><NotFound /></>} />
 					<Route path="*" element={<Navigate replace to="/404" />} />
