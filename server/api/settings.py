@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'user_management',
     'event_management',
     'corsheaders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
