@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Divider } from '@mui/material';
 import { Navigate, useNavigate } from "react-router-dom";
 
 function NavBar() {
@@ -42,13 +42,18 @@ function NavBar() {
   return (
     <AppBar position="static" style={{ backgroundColor: '#FF5733' }}>
       <Toolbar>
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
+        <Typography variant="h6" style={{ flexGrow: 1 }} className='hover:text-black'>
           <a href="/home" style={{ textDecoration: 'none', color: 'inherit' }}>
             Eventify
           </a>
         </Typography>
-        {user_role == 'Attendee' && <Button color="inherit" onClick={navigateToDashboard}>My Registrations</Button>}
-        <Button color="inherit" onClick={handleLogout}>Logout</Button>
+        {(user_role === 'Attendee' || user_role === 'Organizer') && (
+          <Button color="inherit" onClick={navigateToDashboard} className='hover:text-black'>
+            Dashboard
+          </Button>
+        )}
+        <Divider orientation="vertical" flexItem style={{ margin: '0 10px'}} />
+        <Button color="inherit" onClick={handleLogout} className='hover:text-black'>Logout</Button>
       </Toolbar>
     </AppBar>
   );
