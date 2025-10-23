@@ -39,9 +39,9 @@ function EventDetails() {
 
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} sm={8} md={6}>
+    <div>
+      <Grid container spacing={2} justifyContent="center" alignContent='center'>
+        <Grid item xs={12} sm={10} md={8}>
           <EventDetailCard {...eventData} />
         </Grid>
       </Grid>

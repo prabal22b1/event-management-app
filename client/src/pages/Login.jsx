@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import axios from 'axios';
 // import LoginForm from '../components/forms/LoginForm';
 import  LoginForm from '../components/forms/LogInForm';
 import Alert from '@mui/material/Alert';
-import { useAuth } from  '../contexts/AuthContext';
 
 const Login = () => {
   const [error, setError] = useState('');
@@ -12,39 +11,55 @@ const Login = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
 
   useEffect(() => {
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
       window.history.replaceState({}, document.title);
-    }}, []);
+    }
+  }, []);
 
   const handleSubmit = async (data) => {
     setLoading(true);
     setError('');
-    setSuccessMessage('');    
-
-    const result= await login(data);
+    setSuccessMessage('');
     
-    if(result.success){
-      sessionStorage.setItem("user_role", result.user.role)
-      sessionStorage.setItem("user_id", result.user.id)
-      if (result.user.role === 'Admin') {
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/v1/users/auth/login/',
+        data,
+        {
+          headers: {
+            'Content-type': 'application/json'
+          }
+        }
+      );
+
+      localStorage.setItem('accessToken', response.data.access);
+      localStorage.setItem('refreshToken', response.data.refresh);
+      localStorage.setItem('user_role', response.data.user.role);
+
+      if (response.data.user.role === 'Admin') {
         navigate('/admin');
-      } else if (result.user.role === 'Organizer') {
+      } else if (response.data.user.role === 'Organizer') {
         navigate('/dashboard');
       } else {
         navigate('/home');
       }
-    }else{
-      setError(result.error);
+
+    } catch (err) {
+      console.error('Login error:', err);
+      const errorMessage = err.response?.data?.detail || 
+                          err.response?.data?.message || 
+                          'Login failed';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
-    <div className="flex justify-center items-center mt-[15%]">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
       <div className="p-8 bg-white rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         {successMessage && !error && (

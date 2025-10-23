@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {useAuth} from '../contexts/AuthContext';   
 import axios from 'axios';
 import SignUpForm from '../components/forms/SignUpForm';
-
 import Alert from '@mui/material/Alert';
 
 const SignUp = () => {
@@ -11,46 +9,63 @@ const SignUp = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const {register}= useAuth();
 
   const handleSubmit = async (data) => {
     setLoading(true);
     setError('');
     setSuccess('');
     
-    const result= await register(data);
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/v1/users/register/',
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
 
-        if(result.success){
-          setSuccess('Registration successful! Redirecting to login...');
+      setSuccess('Registration successful! Redirecting to login...');
+      
+      setTimeout(() => {
+        navigate('/login', { 
+          replace: true,
+          state: { 
+            message: 'Registration successful! Please login with your credentials.'
+          }
+        });
+      }, 2000);
 
-          setTimeout(() => {
-            navigate('/login', { 
-              replace: true,
-              state: { 
-                  message: 'Registration successful! Please login with your credentials.'
-                  }});
-                }, 2000);}
-        else{
-
-        if(typeof result.error === 'object'){
-            if(result.error.username){
-              setError(`Username: ${result.error.username[0]}`);
-            }else if(result.error.email){
-              setError(`Email: ${result.error.email[0]}`);
-            }else if(result.error.detail){
-              setError(result.error.detail);
-            }else{
-              setError(Object.values(result.error)[0]?.[0] || 'Registration failed');
-            }
-          }else{
-           setError(result.error);
-          }}
-
-    setLoading(false);
-    };
+    } catch (err) {
+      console.error('Registration error:', err);
+      
+      if (err.response?.data) {
+        const errorData = err.response.data;
+        
+        if (typeof errorData === 'object') {
+          if (errorData.username) {
+            setError(`Username: ${errorData.username[0]}`);
+          } else if (errorData.email) {
+            setError(`Email: ${errorData.email[0]}`);
+          } else if (errorData.detail) {
+            setError(errorData.detail);
+          } else {
+            setError(Object.values(errorData)[0]?.[0] || 'Registration failed');
+          }
+        } else {
+          setError(errorData);
+        }
+      } else {
+        setError('Registration failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="flex justify-center items-center p-16">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
       <div className="p-8 bg-white rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
         {success ? (

@@ -1,71 +1,82 @@
 import React from 'react';
-import { Card, CardContent, Typography, Button, Grid, CardMedia } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { Card, CardContent, Typography, Button, CardMedia } from '@mui/material';
+import axios from 'axios';
+import { useState } from 'react';
 
 function EventDetailCard({ title, description, date, time, location, available_seats, event_type }) {
-   
-
     
+    const [registrationSuccess, setRegistrationSuccess] = useState(false);
+    const handleRegister = async () => {
+        try {
+            const token = localStorage.getItem('accessToken'); // Retrieve token if needed
+            const response = await axios.post(`http://localhost:8000/api/v1/events/${id}/register`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-type': 'application/json'
+                }
+            })
+            alert('Registration successful!');
+            setRegistrationSuccess(true);
+        } catch (err) {
+            setError(err);
+            console.error("Error fetching event details:", err);
+        }
 
-    const handleRegister = () => {
-        alert('Registration successful!');
-        // Add registration logic here
     };
-
     const eventDateFormatted = new Date(date).toLocaleDateString('en-US', {
         day: 'numeric',
-        month: 'short'
+        month: 'short',
+        year: 'numeric'
     });
     const imageMap = {
-        Concert: 'concert.jpg',
-        Webinar: 'webinar.jpg',
-        Conference: 'conference.jpg',
-        Workshop: 'workshop.jpg'
+        concert: '/concert.jpg',
+        webinar: '/webinar.jpg',
+        conference: '/conference.jpg',
+        workshop: '/workshop.jpg'
     };
-
-    const image = imageMap[event_type];
-
-    
-
+    const image = imageMap[(event_type || '').toLowerCase()] || 'default.jpg';
     return (
         <div className='relative w-fit'>
-            <Card style={{ margin: '20px', padding: '20px' }}>
+            <Card style={{ margin: '20px', padding: '20px', width: '500px' }}>
+                {registrationSuccess && (
+                    <Alert severity="success" style={{ backgroundColor: 'green', color: 'white', marginBottom: '20px' }}>
+                        Registration successful!
+                    </Alert>
+                )}
                 <CardContent>
                     <div>
                         <CardMedia
                             component="img"
                             image={image}
                             alt={`${event_type} image`}
-                            sx={{ height: 194, width: '100%', objectFit: 'cover' }}
+                            sx={{ height: '200px', width: '100%', objectFit: 'cover' }}
                         />
-                        <span className="relative bottom-1 left-1 text-white font-semibold bg-gray-500 bg-opacity-50 px-2 py-1 rounded text-xs">{event_type}</span>
-                        <span className="relative bottom-1 right-1 text-white bg-gray-500 bg-opacity-50 px-2 py-1 rounded text-xs">
-                            {eventDateFormatted}
-                        </span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative', bottom: '25px' }}>
+                            <span className="text-white font-semibold bg-gray-500 bg-opacity-50 px-2 py-1 rounded text-xs">{event_type}</span>
+                            <span className="text-white bg-gray-500 bg-opacity-50 px-2 py-1 rounded text-xs">
+                                {eventDateFormatted}
+                            </span>
+                        </div>
                     </div>
-                    <Typography variant="h4" gutterBottom>
+                    {/* Title with a larger, bold font */}
+                    <Typography variant="h4" gutterBottom style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '16px', fontFamily: 'Arial, sans-serif' }}>
                         {title}
                     </Typography>
-
-                    <Typography variant="body1" gutterBottom>
+                    {/* Description with increased font size */}                     <Typography variant="h6" gutterBottom style={{ marginBottom: '8px', fontFamily: 'Arial, sans-serif' }}>
                         {description}
                     </Typography>
-                    <br></br>
-                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                    {/* Details with consistent styling */}
+                    <Typography variant="h6" color="textSecondary" gutterBottom style={{ marginBottom: '8px', fontFamily: 'Arial, sans-serif' }}>
                         Date: {eventDateFormatted}
                     </Typography>
-                    <br></br>
-                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                    <Typography variant="h6" color="textSecondary" gutterBottom style={{ marginBottom: '8px', fontFamily: 'Arial, sans-serif' }}>
                         Time: {time}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                    <Typography variant="h6" color="textSecondary" gutterBottom style={{ marginBottom: '8px', fontFamily: 'Arial, sans-serif' }}>
                         Location: {location}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                    <Typography variant="h6" color="textSecondary" gutterBottom style={{ marginBottom: '8px', fontFamily: 'Arial, sans-serif' }}>
                         Available Seats: {available_seats}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary" gutterBottom>
-                        Type: {event_type}
                     </Typography>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <Button
@@ -75,14 +86,12 @@ function EventDetailCard({ title, description, date, time, location, available_s
                             onClick={handleRegister}
                             style={{ marginTop: '20px' }}
                         >
-
                             Register
                         </Button>
                     </div>
                 </CardContent>
             </Card>
-        </div >
+        </div>
     );
 }
-
-export default EventDetailCard
+export default EventDetailCard;

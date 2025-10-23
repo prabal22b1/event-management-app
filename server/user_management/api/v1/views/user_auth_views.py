@@ -23,8 +23,9 @@ def custom_token_obtain_pair(request):
     if serializer.is_valid():
         user = serializer.validated_data['user']
         refresh = RefreshToken.for_user(user)
-        response= Response({
-            
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
             'user': {
                 'id': user.id,
                 'username': user.username,
@@ -33,26 +34,6 @@ def custom_token_obtain_pair(request):
                 'role': user.role,
             }
         },status=status.HTTP_200_OK)
-    
-        response.set_cookie(
-            'access_token',
-            str(refresh.access_token),
-            max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds(),
-            httponly=True,
-            secure=not settings.DEBUG,
-            samesite='Lax'
-        )
-
-        response.set_cookie(
-            'refresh_token',
-            str(refresh),
-            max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds(),
-            httponly=True,
-            secure=not settings.DEBUG,
-            samesite='Lax'
-        )
-        return response
-
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -72,7 +53,7 @@ def register_user(request):
                 'email': user.email,
                 'name': user.name,
                 'role': user.role,
-            }
+            },
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,33 +61,10 @@ def register_user(request):
 @permission_classes([permissions.IsAuthenticated])
 def logout_user(request):
     try:
-        refresh_token = request.COOKIES.get('refresh_token')
-        if refresh_token :
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-        response= Response({"message": "User logged out successfully."}, status=status.HTTP_200_OK)
-
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token') 
-        return response
-
+        refresh_token = request.data["refresh"]
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response({"message": "User logged out successfully."}, status=status.HTTP_200_OK)
     except Exception as e:
-
-        response= Response({"message":"User logged out successfully."}, status=status.HTTP_200_OK)
-        response.delete_cookie('access_token')  
-        response.delete_cookie('refresh_token')
-        return response
-
-
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def get_current_user(request):
-    user = request.user
-    return Response({
-        'id': user.id,
-        'username': user.username,
-        'email': user.email,
-        'name': user.name,
-        'role': user.role,
-    }, status=status.HTTP_200_OK)
+        return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
       
