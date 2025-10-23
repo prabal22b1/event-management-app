@@ -94,6 +94,37 @@ def getEventRegistrationsForUser(request, user_id):
                         'title': event.title,
                         'event_type': event.event_type,
                     })
-        return Response(events_data, status=status.HTTP_200_OK)
+        return Response({'events': events_data, 'count': len(events_data)}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def checkIfUserRegisterforEvent(request, event_id):
+    """
+    Check if user is registered for a particular event
+    return true if registered else false
+    """
+
+    #Check if the user is authorized
+    user = request.user
+    
+    if not get_user_role(user) == 'Attendee':
+        return Response({'error': 'User is not authorized to perform this action'}, 
+                        status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+    try:
+        # check if registration exists
+        registration = Registration.objects.get(user_id=user, event_id=event)
+        if registration.registration_status == 'Confirmed':
+            return Response({'registered': True}, status=200)
+        else:
+            return Response({'registered': False}, status=200)
+    except Registration.DoesNotExist:
+            return Response({'error': 'Registration not found'}, status=status.HTTP_404_NOT_FOUND)
