@@ -17,7 +17,7 @@ function NavBar() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
           },
-          body: {'refresh': refreshToken }
+          body: JSON.stringify({ refresh: refreshToken })
         });
       }
 
