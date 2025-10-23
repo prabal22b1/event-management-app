@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import { Link as RouterLink } from 'react-router-dom';
 
-
+import TextField  from '@mui/material/TextField'; 
 
 const SignUpForm = ({ onSubmit, loading }) => {
   const {
@@ -18,27 +18,33 @@ const SignUpForm = ({ onSubmit, loading }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      
       <div>
-        <FormLabel>Username</FormLabel>
-        <Input
+        <TextField
+          label="Username"
+          type="text"
           fullWidth
           {...register("username", { required: "Username is required" })}
           error={!!errors.username}
+          helperText={errors.username?.message}   
         />
       </div>
 
       <div>
-        <FormLabel>Name</FormLabel>
-        <Input
+        <TextField
+          label="Name"
+          type="text"
           fullWidth
           {...register("name", { required: "Name is required" })}
           error={!!errors.name}
+          helperText={errors.name?.message}   
         />
       </div>
-
+      
+      
       <div>
-        <FormLabel>Email</FormLabel>
-        <Input
+        <TextField
+          label="Email"
           fullWidth
           type="email"
           {...register("email", {
@@ -49,12 +55,14 @@ const SignUpForm = ({ onSubmit, loading }) => {
             }
           })}
           error={!!errors.email}
-        />
+          helperText={errors.email?.message}   
+        />  
       </div>
 
+
       <div>
-        <FormLabel>Password</FormLabel>
-        <Input
+        <TextField
+          label="Password"
           fullWidth
           type="password"
           {...register("password", {
@@ -65,20 +73,24 @@ const SignUpForm = ({ onSubmit, loading }) => {
             }
           })}
           error={!!errors.password}
-        />
+          helperText={errors.password?.message}   
+        />  
       </div>
-
       <div>
-        <FormLabel>Role</FormLabel>
-        <Select
+        <TextField
+          label="Role"
           fullWidth
+          select
           defaultValue="Attendee"
           {...register("role", { required: "Role is required" })}
+          error={!!errors.role}
+          helperText={errors.role?.message}   
         >
           <MenuItem value="Attendee">Attendee</MenuItem>
           <MenuItem value="Organizer">Organizer</MenuItem>
-        </Select>
+        </TextField>
       </div>
+
       <br></br>
       <Link
         component={RouterLink}

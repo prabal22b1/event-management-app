@@ -4,6 +4,7 @@ import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
+import TextField  from '@mui/material/TextField'; 
 
 const LoginForm = ({ onSubmit, loading }) => {
   const {
@@ -14,11 +15,13 @@ const LoginForm = ({ onSubmit, loading }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      
+
       <div>
-        <FormLabel>Email</FormLabel>
-        <Input
-          fullWidth
+        <TextField
+          label="Email"
           type="email"
+          fullWidth
           {...register("email", {
             required: "Email is required",
             pattern: {
@@ -27,18 +30,21 @@ const LoginForm = ({ onSubmit, loading }) => {
             }
           })}
           error={!!errors.email}
-        />
+          helperText={errors.email?.message}   
+        /> 
       </div>
 
+
       <div>
-        <FormLabel>Password</FormLabel>
-        <Input
-          fullWidth
+        <TextField
+          label="Password"
           type="password"
+          fullWidth
           {...register("password", { required: "Password is required" })}
           error={!!errors.password}
-        />
-      </div>
+          helperText={errors.password?.message}   
+        /> 
+      </div>  
 
       <br></br>
 
