@@ -43,7 +43,9 @@ function NavBar() {
     <AppBar position="static" style={{ backgroundColor: '#FF5733' }}>
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
-          Eventify
+          <a href="/home" style={{ textDecoration: 'none', color: 'inherit' }}>
+            Eventify
+          </a>
         </Typography>
         {user_role == 'Attendee' && <Button color="inherit" onClick={navigateToDashboard}>My Registrations</Button>}
         <Button color="inherit" onClick={handleLogout}>Logout</Button>
