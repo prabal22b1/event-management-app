@@ -1,17 +1,30 @@
 // EventRegistrationForm.jsx
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { useNavigate } from 'react-router-dom';
 
 
-const EventRegistrationForm = ({ onSubmit, loading }) => {
+const EventRegistrationForm = ({ title, description, date, time, location, available_seats, event_type, onSubmit, loading }) => {
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        defaultValues: {
+            title,
+            description,
+            date,
+            time,
+            location,
+            available_seats,
+            event_type: event_type || '',
+        },
+    });
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -27,19 +40,25 @@ const EventRegistrationForm = ({ onSubmit, loading }) => {
             </div>
 
             <div>
-                <Select
-                    fullWidth
-                    defaultValue=""
-                    displayEmpty
-                    {...register("event_type", { required: "Event type is required" })}
-                    error={!!errors.event_type}
-                >
-                    <MenuItem value="" disabled>Select Event Type</MenuItem>
-                    <MenuItem value="Concert">Concert</MenuItem>
-                    <MenuItem value="Webinar">Webinar</MenuItem>
-                    <MenuItem value="Conference">Conference</MenuItem>
-                    <MenuItem value="Workshop">Workshop</MenuItem>
-                </Select>
+                <Controller
+                    name="event_type"
+                    control={control}
+                    rules={{ required: "Event type is required" }}
+                    render={({ field }) => (
+                        <Select
+                            {...field}
+                            fullWidth
+                            displayEmpty
+                            error={!!errors.event_type}
+                        >
+                            <MenuItem value="" disabled>Select Event Type</MenuItem>
+                            <MenuItem value="Concert">Concert</MenuItem>
+                            <MenuItem value="Webinar">Webinar</MenuItem>
+                            <MenuItem value="Conference">Conference</MenuItem>
+                            <MenuItem value="Workshop">Workshop</MenuItem>
+                        </Select>
+                    )}
+                />
             </div>
 
             <div>
@@ -83,26 +102,40 @@ const EventRegistrationForm = ({ onSubmit, loading }) => {
                     helperText={errors.time?.message}
                 />
             </div>
+            {available_seats !== undefined ? null : (
+                <div>
+                    <TextField
+                        label="Total Seats"
+                        fullWidth
+                        type="number"
+                        {...register("available_seats", { required: "Total seats are required" })}
+                        error={!!errors.available_seats}
+                        helperText={errors.available_seats?.message}
+                    />
+                </div>
+            )}
 
-            <div>
-                <TextField
-                    label="Total Seats"
+
+            <div className="flex justify-between space-x-4">
+                <Button
+                    type="submit"
+                    variant="contained"
                     fullWidth
-                    type="number"
-                    {...register("available_seats", { required: "Total seats are required" })}
-                    error={!!errors.available_seats}
-                    helperText={errors.available_seats?.message}
-                />
+                    disabled={loading}
+                >
+                    {loading ? 'Submitting...' : 'Submit'}
+                </Button>
+                <Button
+                    type="button"
+                    variant="contained"
+                    fullWidth
+                    disabled={loading}
+                    sx={{ backgroundColor: 'red' }}
+                    onClick={() => navigate('/dashboard')}
+                >
+                    Cancel
+                </Button>
             </div>
-
-            <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                disabled={loading}
-            >
-                {loading ? 'Submitting...' : 'Submit'}
-            </Button>
         </form>
 
     );
