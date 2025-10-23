@@ -47,6 +47,7 @@ const LoginForm = ({ onSubmit, loading }) => {
       underline="always"
       color="primary"
       sx={{ color: 'blue' }} 
+      className='cursor-pointer'
     >
       Not Registered? Click here.
     </Link>
