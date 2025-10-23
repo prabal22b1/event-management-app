@@ -1,7 +1,7 @@
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 
-export default function EventCard( {eventId, eventDate, eventTitle, eventLocation, eventType, isSoldOut }) {
+export default function EventCard( {eventId, eventDate, eventTitle, eventLocation, eventType, isSoldOut=false }) {
   // format date to show only day and month
   const eventDateFormatted = new Date(eventDate).toLocaleDateString('en-US', {
     day: 'numeric',

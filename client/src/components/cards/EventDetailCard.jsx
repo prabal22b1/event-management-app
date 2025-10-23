@@ -2,9 +2,13 @@ import React from 'react';
 import { Card, CardContent, Typography, Button, CardMedia } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function EventDetailCard({ title, description, date, time, location, available_seats, event_type }) {
+    const user_role = localStorage.getItem('user_role');
     
+    const navigate = useNavigate();
+
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
     const handleRegister = async () => {
         try {
@@ -23,6 +27,12 @@ function EventDetailCard({ title, description, date, time, location, available_s
         }
 
     };
+
+    const handleEditEvent = () => {
+        // Navigate to the edit event form
+        console.log("Navigating to edit event form...");
+    }
+
     const eventDateFormatted = new Date(date).toLocaleDateString('en-US', {
         day: 'numeric',
         month: 'short',
@@ -79,15 +89,27 @@ function EventDetailCard({ title, description, date, time, location, available_s
                         Available Seats: {available_seats}
                     </Typography>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            width='30px'
-                            onClick={handleRegister}
-                            style={{ marginTop: '20px' }}
-                        >
-                            Register
-                        </Button>
+
+                        {user_role === 'Organizer' ? (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleEditEvent} // Organizer-specific handler
+                                style={{ marginTop: '20px' }}
+                            >
+                                Edit Event Details
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="contained"
+                                color={available_seats > 0 ? 'primary' : 'secondary'}
+                                onClick={handleRegister} // Attendee-specific handler
+                                disabled={available_seats <= 0}
+                                style={{ marginTop: '20px' }}
+                            >
+                                {available_seats > 0 ? 'Register' : 'Event is Sold Out'}
+                            </Button>
+                        )}
                     </div>
                 </CardContent>
             </Card>

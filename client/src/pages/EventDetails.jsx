@@ -41,7 +41,7 @@ function EventDetails() {
   return (
     <div>
       <Grid container spacing={2} justifyContent="center" alignContent='center'>
-        <Grid item xs={12} sm={10} md={8}>
+        <Grid>
           <EventDetailCard {...eventData} />
         </Grid>
       </Grid>
