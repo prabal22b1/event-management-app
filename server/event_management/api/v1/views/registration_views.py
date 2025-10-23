@@ -74,12 +74,12 @@ def manageRegistrationsForEvent(request, event_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getEventRegistrationsForUser(request, user_id):
+def getEventRegistrationsForUser(request):
     """
     Get all events a specific user is registered for.
     Returns only event title and event_type.
     """
-
+    user_id = request.user.id
     user = User.objects.get(id=user_id)
     try:
         # Fetch registrations for the specific user
@@ -91,8 +91,13 @@ def getEventRegistrationsForUser(request, user_id):
                 if registration.registration_status == 'Confirmed':
                     event = registration.event_id
                     events_data.append({
+                        'id': event.id,
                         'title': event.title,
                         'event_type': event.event_type,
+                        'date': event.date,
+                        'location': event.location,
+                        'event_type': event.event_type,
+                        'available_seats': event.available_seats
                     })
         return Response({'events': events_data, 'count': len(events_data)}, status=status.HTTP_200_OK)
     except Exception as e:
