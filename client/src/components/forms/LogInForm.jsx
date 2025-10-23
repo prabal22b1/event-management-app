@@ -50,7 +50,7 @@ const LoginForm = ({ onSubmit, loading }) => {
       sx={{ color: 'blue' }}
       className='cursor-pointer'
     >
-      Not Registered? Click here.
+      Not Registered? Click here to sign up.
     </Link>
       <br></br>
       <br></br>

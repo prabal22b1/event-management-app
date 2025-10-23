@@ -10,6 +10,11 @@ function SearchBar({ label, searchTerm, onSearch, type }) {
           <DatePicker
             variant="outlined"
             margin="normal"
+            sx={{
+                backgroundColor: 'white',   
+                borderRadius: 1,            
+                boxShadow: 1               
+            }}
             label={label}
             value={searchTerm}
             onChange={onSearch}
@@ -20,6 +25,11 @@ function SearchBar({ label, searchTerm, onSearch, type }) {
       ) : (
         <TextField
           label={label}
+          sx={{
+                backgroundColor: 'white',   
+                borderRadius: 1,            
+                boxShadow: 1               
+            }}
           variant="outlined"
           margin="normal"
           value={searchTerm}

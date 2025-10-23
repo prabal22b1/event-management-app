@@ -1,31 +1,94 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Button, CardMedia } from '@mui/material';
 import axios from 'axios';
-import { useState } from 'react';
+import Snackbar from '@mui/material/Snackbar';
+import { useParams } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 
-function EventDetailCard({ title, description, date, time, location, available_seats, event_type }) {
-    const user_role = localStorage.getItem('user_role');
-    
-    const navigate = useNavigate();
 
+
+function EventDetailCard({ title, description, date, time, location, available_seats, event_type }) {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
+    const [error, setError] = useState(null);
+    const [toast, setToast] = useState(false);
+    const [isRegistered, setRegistrationStatus] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+
+    const user_role = localStorage.get("user_role")
+
+
+
+    useEffect(() => {
+        const fetchRegistrationStatus = async () => {
+            try {
+                const token = localStorage.getItem('accessToken');
+                const response = await axios.get(`http://localhost:8000/api/v1/events/${id}/check-registration/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-type': 'application/json'
+                    }
+                });
+                setRegistrationStatus(response.data.registered);
+            } catch (err) {
+            }
+        };
+        fetchRegistrationStatus();
+    }, [id]);
+    const handleClose = () => {
+        setError(null);
+        navigate('/home');
+    };
+    const action = (
+        <React.Fragment>
+            <IconButton
+                size="small"
+                aria-label="close"
+                color="inherit"
+                onClick={handleClose}
+            >
+                <CloseIcon fontSize="small" />
+            </IconButton>
+        </React.Fragment>
+    );
     const handleRegister = async () => {
         try {
-            const token = localStorage.getItem('accessToken'); // Retrieve token if needed
-            const response = await axios.post(`http://localhost:8000/api/v1/events/${id}/register`, {
+            const token = localStorage.getItem('accessToken');
+            const response = await axios.post(`http://localhost:8000/api/v1/events/${id}/register/`, null, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-type': 'application/json'
                 }
-            })
-            alert('Registration successful!');
+            });
             setRegistrationSuccess(true);
+            setRegistrationStatus(true);
+            setSuccessMessage('Registered successfully! Redirecting to home page!');
+            setToast(true);
         } catch (err) {
-            setError(err);
-            console.error("Error fetching event details:", err);
+            setError("You are already registered!");
+            console.error("Error registering for event:", err);
         }
-
+    };
+    const handleRegistrationCancellation = async () => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            const response = await axios.put(`http://localhost:8000/api/v1/events/${id}/register/`, null, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-type': 'application/json'
+                }
+            });
+            setRegistrationStatus(false);
+            setSuccessMessage('Registration successfully cancelled! Redirecting to home page!');
+            setToast(true);
+        } catch (err) {
+            setError("Error cancelling registration!");
+            console.error("Error cancelling registration for event:", err);
+        }
     };
 
     const handleEditEvent = () => {
@@ -49,8 +112,13 @@ function EventDetailCard({ title, description, date, time, location, available_s
         <div className='relative w-fit'>
             <Card style={{ margin: '20px', padding: '20px', width: '500px' }}>
                 {registrationSuccess && (
-                    <Alert severity="success" style={{ backgroundColor: 'green', color: 'white', marginBottom: '20px' }}>
+                    <Alert severity="success" className="mb-4">
                         Registration successful!
+                    </Alert>
+                )}
+                {error && (
+                    <Alert severity="error" className="mb-4">
+                        {error}
                     </Alert>
                 )}
                 <CardContent>
@@ -68,14 +136,12 @@ function EventDetailCard({ title, description, date, time, location, available_s
                             </span>
                         </div>
                     </div>
-                    {/* Title with a larger, bold font */}
                     <Typography variant="h4" gutterBottom style={{ fontWeight: 'bold', fontSize: '2rem', marginBottom: '16px', fontFamily: 'Arial, sans-serif' }}>
                         {title}
                     </Typography>
-                    {/* Description with increased font size */}                     <Typography variant="h6" gutterBottom style={{ marginBottom: '8px', fontFamily: 'Arial, sans-serif' }}>
+                    <Typography variant="h6" gutterBottom style={{ marginBottom: '8px', fontFamily: 'Arial, sans-serif' }}>
                         {description}
                     </Typography>
-                    {/* Details with consistent styling */}
                     <Typography variant="h6" color="textSecondary" gutterBottom style={{ marginBottom: '8px', fontFamily: 'Arial, sans-serif' }}>
                         Date: {eventDateFormatted}
                     </Typography>
@@ -89,27 +155,52 @@ function EventDetailCard({ title, description, date, time, location, available_s
                         Available Seats: {available_seats}
                     </Typography>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-
-                        {user_role === 'Organizer' ? (
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleEditEvent} // Organizer-specific handler
-                                style={{ marginTop: '20px' }}
-                            >
-                                Edit Event Details
-                            </Button>
+                        {user_role === 'Organizer' ? (<Button
+                            variant="contained"
+                            color="primary"
+                            width='30px'
+                            onClick={handleRegistrationCancellation}
+                            style={{ marginTop: '20px' }}
+                        >
+                            Edit event details
+                        </Button>
                         ) : (
-                            <Button
-                                variant="contained"
-                                color={available_seats > 0 ? 'primary' : 'secondary'}
-                                onClick={handleRegister} // Attendee-specific handler
-                                disabled={available_seats <= 0}
-                                style={{ marginTop: '20px' }}
-                            >
-                                {available_seats > 0 ? 'Register' : 'Event is Sold Out'}
-                            </Button>
+                            isRegistered ? (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    width='30px'
+                                    onClick={handleRegistrationCancellation}
+                                    style={{ marginTop: '20px' }}
+                                >
+                                    Cancel Registration
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    width='30px'
+                                    onClick={handleRegister}
+                                    style={{ marginTop: '20px' }}
+                                >
+                                    Register
+                                </Button>
+                            )
                         )}
+                        <Snackbar
+                            open={toast}
+                            autoHideDuration={3000}
+                            onClose={handleClose}
+                            message={successMessage}
+                            action={action}
+                        />
+                        <Snackbar
+                            open={!!error}
+                            autoHideDuration={3000}
+                            onClose={handleClose}
+                            message={error}
+                            action={action}
+                        />
                     </div>
                 </CardContent>
             </Card>
