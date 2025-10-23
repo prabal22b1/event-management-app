@@ -78,7 +78,7 @@ const Dashboard = () => {
             variant="contained"
             color="primary"
             onClick={() =>
-              navigate(userRole === 'Organizer' ? '/new-event' : '/home')
+              navigate(userRole === 'Organizer' ? '/dashboard/new-event' : '/home')
             }
           >
             {userRole === 'Organizer' ? 'Create New Event' : 'Browse Events'}
