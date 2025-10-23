@@ -2,7 +2,7 @@ from event_management.models import Registration
 
 def get_user_role(user):
     """
-    Check if the authenticated user has an 'attendee' role.
+    Get the role of the user.
     """
     return getattr(user, 'role', None)
 
@@ -19,5 +19,5 @@ def is_user_already_registered(user_id, event_id):
     Check if the user is already registered for the event.
     Return True if registered, otherwise False.
     """
-    return Registration.objects.filter(user_id=user_id, event_id=event_id).exists()
+    return Registration.objects.filter(user_id=user_id, event_id=event_id, registration_status='Confirmed').exists()
 
