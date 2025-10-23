@@ -19,6 +19,8 @@ function EventDetailCard({ title, description, date, time, location, available_s
     const [isRegistered, setRegistrationStatus] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
+    const user_role = localStorage.get("user_role")
+
 
 
     useEffect(() => {
@@ -147,25 +149,38 @@ function EventDetailCard({ title, description, date, time, location, available_s
                         Available Seats: {available_seats}
                     </Typography>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        {isRegistered ?
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                width='30px'
-                                onClick={handleRegistrationCancellation}
-                                style={{ marginTop: '20px' }}
-                            >
-                                Cancel Registration
-                            </Button> :
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                width='30px'
-                                onClick={handleRegister}
-                                style={{ marginTop: '20px' }}
-                            >
-                                Register
-                            </Button>}
+                        {user_role === 'Organizer' ? (<Button
+                            variant="contained"
+                            color="primary"
+                            width='30px'
+                            onClick={handleRegistrationCancellation}
+                            style={{ marginTop: '20px' }}
+                        >
+                            Edit event details
+                        </Button>
+                        ) : (
+                            isRegistered ? (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    width='30px'
+                                    onClick={handleRegistrationCancellation}
+                                    style={{ marginTop: '20px' }}
+                                >
+                                    Cancel Registration
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    width='30px'
+                                    onClick={handleRegister}
+                                    style={{ marginTop: '20px' }}
+                                >
+                                    Register
+                                </Button>
+                            )
+                        )}
                         <Snackbar
                             open={toast}
                             autoHideDuration={3000}
