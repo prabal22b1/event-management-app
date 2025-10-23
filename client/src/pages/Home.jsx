@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EventCard from '../components/cards/EventCard';
-import NavBar from '../components/bars/NavBar';
 import SearchBar from '../components/bars/SearchBar';
 import { Pagination } from '@mui/material';
 import axios from 'axios';
+
 const Home = () => {
   const [nameSearchTerm, setNameSearchTerm] = useState('');
   const [dateSearchTerm, setDateSearchTerm] = useState(null);

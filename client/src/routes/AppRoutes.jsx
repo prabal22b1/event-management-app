@@ -3,6 +3,7 @@ import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from '../components/ProtectedRoute'
 import NavBar from '../components/bars/NavBar'
+import Spinner from '../components/Spinner'
 
 const LandingPage = lazy(() => import('../pages/LandingPage'))
 const Home = lazy(() => import('../pages/Home'))
@@ -18,11 +19,11 @@ const NewEvent = lazy(() => import('../pages/NewEvent'))
 export default function AppRoutes() {
 	return (
 		<BrowserRouter>
-			<Suspense fallback={<div className='p-20'>Loading...</div>}>
+			<Suspense fallback={<Spinner />}>
 				<Routes>
 					<Route path="/" element={<LandingPage />} />
 					
-					<Route path="/home" element={<ProtectedRoute requiredRole={['Attendee', 'Organizer']}><><NavBar /><Home /></></ProtectedRoute>} />
+					<Route path="/home" element={<ProtectedRoute requiredRole={['Attendee']}><><NavBar /><Home /></></ProtectedRoute>} />
 
 					<Route path="/login" element={<Login />} />
 					<Route path="/signup" element={<SignUp />} />
@@ -31,7 +32,7 @@ export default function AppRoutes() {
 					<Route path="/admin" element={<ProtectedRoute requiredRole={['Admin']}><><NavBar /><AdminDashboard /></></ProtectedRoute>} />
 					
 					<Route path="/dashboard/new-event" element={<ProtectedRoute requiredRole={['Organizer']}><><NavBar /><NewEvent /></></ProtectedRoute>} />
-					<Route path="/events/:id" element={<ProtectedRoute><><NavBar /><EventDetails /></></ProtectedRoute>} />
+					<Route path="/events/:id" element={<ProtectedRoute requiredRole={['Attendee', 'Organizer']}><><NavBar /><EventDetails /></></ProtectedRoute>} />
 					
 					<Route path="/unauthorized" element={<><NavBar /><Unauthorized /></>} />
 					<Route path="/404" element={<><NavBar /><NotFound /></>} />

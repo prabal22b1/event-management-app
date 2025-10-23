@@ -6,7 +6,7 @@ urlpatterns = [
     path('', manageEvent, name='manageEvent'),
     path('<int:event_id>/', manageEventDetails, name='manageEventDetails'),
     path('<int:event_id>/register/', manageRegistrationsForEvent, name='manageRegistrationsForEvent'),
-    path('registrations/user/<int:user_id>/', getEventRegistrationsForUser, name='getEventRegistrationsForUser'),
-    path('organizer/<int:user_id>/', getEventsForOrganizer, name='getEventsForOrganizer'),
+    path('registrations/user/', getEventRegistrationsForUser, name='getEventRegistrationsForUser'),
+    path('organizer/', getEventsForOrganizer, name='getEventsForOrganizer'),
     path('<int:event_id>/check-registration/', checkIfUserRegisterforEvent, name='checkIfUserRegisterforEvent'),
 ]

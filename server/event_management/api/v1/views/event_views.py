@@ -135,14 +135,15 @@ def manageEventDetails(request, event_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getEventsForOrganizer(request, user_id):
+def getEventsForOrganizer(request):
     """
     Retrieve all events created by a specific organizer.
     """
     try:
         # Validate user_id
         try:
-            user_id = int(user_id)
+            user_id = request.user.id
+            # user_id = int(user_id)
             if not user_id:
                 raise ValueError("User ID cannot be zero/Invalid user ID")
         except ValueError:
