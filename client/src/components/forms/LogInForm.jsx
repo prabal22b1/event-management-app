@@ -2,8 +2,8 @@ import { useForm } from 'react-hook-form';
 import Input from '@mui/material/Input';
 import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
-import SignUp from '../../pages/SignUp';
-import { Link } from '@mui/material'
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@mui/material/Link';
 
 const LoginForm = ({ onSubmit, loading }) => {
   const {
@@ -42,11 +42,13 @@ const LoginForm = ({ onSubmit, loading }) => {
 
       <br></br>
 
-      <Link
+    <Link
+      component={RouterLink}
       to="/signup"
       underline="always"
       color="primary"
-      sx={{ color: 'blue' }} 
+      sx={{ color: 'blue' }}
+      className='cursor-pointer'
     >
       Not Registered? Click here.
     </Link>

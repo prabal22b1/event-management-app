@@ -71,7 +71,6 @@ const Home = () => {
   }
   return (
     <div>
-      <NavBar />
       <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '10px', padding: '0 20px', marginBottom: '20px' }}>
         <SearchBar label="Search Name" searchTerm={nameSearchTerm} onSearch={handleNameSearch} type="text" />
         <SearchBar label="Search Date" searchTerm={dateSearchTerm} onSearch={handleDateSearch} type="date" />

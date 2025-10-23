@@ -4,6 +4,10 @@ import FormLabel from '@mui/material/FormLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
+import { Link as RouterLink } from 'react-router-dom';
+
+
 
 const SignUpForm = ({ onSubmit, loading }) => {
   const {
@@ -76,7 +80,17 @@ const SignUpForm = ({ onSubmit, loading }) => {
         </Select>
       </div>
       <br></br>
-      <div style={{display: 'flex', justifyContent: 'center'}}>
+      <Link
+        component={RouterLink}
+        to="/login"
+        underline="always"
+        color="primary"
+        sx={{ color: 'blue' }}
+        className='cursor-pointer'
+      >
+        Already Registered? Click here to Login
+      </Link>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <Button
           width='30px'
           type="submit"

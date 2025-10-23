@@ -39,15 +39,17 @@ def manageEvent(request):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
     
     
-    elif request.method == 'GET': #if GET request (authentication not required)
+    elif request.method == 'GET': #if GET request
         try:
             events = Event.objects.all()
-            if not events.exists():
-                return Response({[]}, status=status.HTTP_200_OK) #If no events found, send empty array
             
-            # If events found, filter them with date older than current date and time to excluse expired events
+            # Filter out events that are older than current date (exclude expired events)
             current_date = timezone.now()
             events = events.filter(date__gte=current_date.date())
+            
+            # If no events found after filtering, return empty list and count 0
+            if not events.exists():
+                return Response({'events': [], 'count': 0}, status=status.HTTP_200_OK)
 
             # Serialize the data
             serializer = EventSerializer(events, many=True)
@@ -105,7 +107,7 @@ def manageEventDetails(request, event_id):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    # Handle GET request for event details by event_id (authentication not required)
+    # Handle GET request for event details by event_id
     elif request.method == 'GET':
         try:
             # Validate event_id 

@@ -2,6 +2,7 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import ProtectedRoute from '../components/ProtectedRoute'
+import NavBar from '../components/bars/NavBar'
 
 const LandingPage = lazy(() => import('../pages/LandingPage'))
 const Home = lazy(() => import('../pages/Home'))
@@ -21,19 +22,19 @@ export default function AppRoutes() {
 				<Routes>
 					<Route path="/" element={<LandingPage />} />
 					
-					<Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+					<Route path="/home" element={<ProtectedRoute requiredRole={['Attendee', 'Organizer']}><><NavBar /><Home /></></ProtectedRoute>} />
 
 					<Route path="/login" element={<Login />} />
 					<Route path="/signup" element={<SignUp />} />
 					
-					<Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-					<Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+					<Route path="/dashboard" element={<ProtectedRoute requiredRole={['Attendee', 'Organizer']}><><NavBar /><Dashboard /></></ProtectedRoute>} />
+					<Route path="/admin" element={<ProtectedRoute requiredRole={['Admin']}><><NavBar /><AdminDashboard /></></ProtectedRoute>} />
 					
-					<Route path="/dashboard/new-event" element={ <ProtectedRoute><NewEvent /></ProtectedRoute>}/>
-					<Route path="/events/:id" element={<ProtectedRoute><EventDetails /></ProtectedRoute>} />
+					<Route path="/dashboard/new-event" element={<ProtectedRoute requiredRole={['Organizer']}><><NavBar /><NewEvent /></></ProtectedRoute>} />
+					<Route path="/events/:id" element={<ProtectedRoute><><NavBar /><EventDetails /></></ProtectedRoute>} />
 					
-					<Route path="/unauthorized" element={<Unauthorized />} />
-					<Route path="/404" element={<NotFound />} />
+					<Route path="/unauthorized" element={<><NavBar /><Unauthorized /></>} />
+					<Route path="/404" element={<><NavBar /><NotFound /></>} />
 					<Route path="*" element={<Navigate replace to="/404" />} />
 				</Routes>
 			</Suspense>
