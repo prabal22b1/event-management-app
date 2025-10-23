@@ -1,11 +1,9 @@
 // EventRegistrationForm.jsx
-import * as React from 'react';
-import { Form, useForm } from 'react-hook-form';
-import Input from '@mui/material/Input';
-import FormLabel from '@mui/material/FormLabel';
+import { useForm } from 'react-hook-form';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 
 const EventRegistrationForm = ({ onSubmit, loading }) => {
@@ -17,28 +15,26 @@ const EventRegistrationForm = ({ onSubmit, loading }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <FormLabel className="text-center">New Event Registration</FormLabel>
-
             <div>
-                <FormLabel>Event Title</FormLabel>
-                <Input
+                <TextField
+                    label="Event Title"
                     fullWidth
                     type="text"
-                    {...register("Event Title", { required: "Title is required", maxLength: 30 })}
-                    error={!!errors["Event Title"]}
+                    {...register("title", { required: "Title is required", maxLength: 30 })}
+                    error={!!errors.title}
+                    helperText={errors.title?.message}
                 />
             </div>
 
             <div>
-                <FormLabel>Event Type</FormLabel>
                 <Select
                     fullWidth
                     defaultValue=""
                     displayEmpty
-                    {...register("Event Type", { required: "Event type is required" })}
-                    error={!!errors["Event Type"]}
+                    {...register("event_type", { required: "Event type is required" })}
+                    error={!!errors.event_type}
                 >
-                    <MenuItem value="" disabled>Event Type</MenuItem>
+                    <MenuItem value="" disabled>Select Event Type</MenuItem>
                     <MenuItem value="Concert">Concert</MenuItem>
                     <MenuItem value="Webinar">Webinar</MenuItem>
                     <MenuItem value="Conference">Conference</MenuItem>
@@ -47,52 +43,55 @@ const EventRegistrationForm = ({ onSubmit, loading }) => {
             </div>
 
             <div>
-                <FormLabel>Description</FormLabel>
-                <Input
+                <TextField
+                    label="Description"
                     fullWidth
                     type="text"
-                    {...register("Description", { required: "Description is required", maxLength: 50 })}
-                    error={!!errors["Description"]}
+                    {...register("description", { required: "Description is required", maxLength: 50 })}
+                    error={!!errors.description}
+                    helperText={errors.description?.message}
                 />
             </div>
 
             <div>
-                <FormLabel>Location</FormLabel>
-                <Input
+                <TextField
+                    label="Location"
                     fullWidth
                     type="text"
-                    {...register("Location", { required: "Location is required", maxLength: 30 })}
-                    error={!!errors["Location"]}
+                    {...register("location", { required: "Location is required", maxLength: 30 })}
+                    error={!!errors.location}
+                    helperText={errors.location?.message}
                 />
             </div>
 
             <div>
-                <FormLabel>Date</FormLabel>
-                <Input
+                <TextField
                     fullWidth
                     type="date"
-                    {...register("Date", { required: "Date is required" })}
-                    error={!!errors["Date"]}
+                    {...register("date", { required: "Date is required" })}
+                    error={!!errors.description}
+                    helperText={errors.date?.message}
                 />
             </div>
 
             <div>
-                <FormLabel>Time</FormLabel>
-                <Input
+                <TextField
                     fullWidth
                     type="time"
-                    {...register("Time", { required: "Time is required" })}
-                    error={!!errors["Time"]}
+                    {...register("time", { required: "Time is required" })}
+                    error={!!errors.time}
+                    helperText={errors.time?.message}
                 />
             </div>
 
             <div>
-                <FormLabel>Total Seats</FormLabel>
-                <Input
+                <TextField
+                    label="Total Seats"
                     fullWidth
                     type="number"
-                    {...register("Total Seats", { required: "Total seats are required" })}
-                    error={!!errors["Total Seats"]}
+                    {...register("available_seats", { required: "Total seats are required" })}
+                    error={!!errors.available_seats}
+                    helperText={errors.available_seats?.message}
                 />
             </div>
 
