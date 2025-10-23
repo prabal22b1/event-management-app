@@ -19,26 +19,27 @@ function EventDetailCard({ title, description, date, time, location, available_s
     const [isRegistered, setRegistrationStatus] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
-    const user_role = localStorage.get("user_role")
+    const user_role = localStorage.getItem("user_role")
 
+    if (user_role === 'Attendee') {
+        useEffect(() => {
+            const fetchRegistrationStatus = async () => {
+                try {
+                    const token = localStorage.getItem('accessToken');
+                    const response = await axios.get(`http://localhost:8000/api/v1/events/${id}/check-registration/`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-type': 'application/json'
+                        }
+                    });
+                    setRegistrationStatus(response.data.registered);
+                } catch (err) {
+                }
+            };
+            fetchRegistrationStatus();
+        }, [id]);
+    }
 
-
-    useEffect(() => {
-        const fetchRegistrationStatus = async () => {
-            try {
-                const token = localStorage.getItem('accessToken');
-                const response = await axios.get(`http://localhost:8000/api/v1/events/${id}/check-registration/`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-type': 'application/json'
-                    }
-                });
-                setRegistrationStatus(response.data.registered);
-            } catch (err) {
-            }
-        };
-        fetchRegistrationStatus();
-    }, [id]);
     const handleClose = () => {
         setError(null);
         navigate('/home');
@@ -92,8 +93,7 @@ function EventDetailCard({ title, description, date, time, location, available_s
     };
 
     const handleEditEvent = () => {
-        // Navigate to the edit event form
-        console.log("Navigating to edit event form...");
+        navigate(`/dashboard/edit-event/${id}`);
     }
 
     const eventDateFormatted = new Date(date).toLocaleDateString('en-US', {
@@ -159,7 +159,7 @@ function EventDetailCard({ title, description, date, time, location, available_s
                             variant="contained"
                             color="primary"
                             width='30px'
-                            onClick={handleRegistrationCancellation}
+                            onClick={handleEditEvent}
                             style={{ marginTop: '20px' }}
                         >
                             Edit event details
