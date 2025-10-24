@@ -118,15 +118,6 @@ const Login = () => {
         message={error}
         action={action}
       />
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-        <Alert onClose={handleClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {successMessage || error}
-        </Alert>
-      </Snackbar>
     </div>
   );
 };
