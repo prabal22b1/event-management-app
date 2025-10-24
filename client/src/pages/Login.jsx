@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import  LoginForm from '../components/forms/LogInForm';
+import LoginForm from '../components/forms/LogInForm';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
+import React from 'react';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+
 
 const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');  
+  const [toast, setToast] = useState(false);
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,17 +22,36 @@ const Login = () => {
   useEffect(() => {
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
+      setToast(true);
+      
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
+  const handleClose = () => {
+    setError(null);
+    navigate('/home');
+  };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
+
 
   const handleSubmit = async (data) => {
     setLoading(true);
     setError('');
     setSuccessMessage('');
-    
+
     try {
       const response = await axios.post(
         'http://localhost:8000/api/v1/users/auth/login/',
@@ -45,60 +68,53 @@ const Login = () => {
       localStorage.setItem('user_role', response.data.user.role);
 
       setSuccessMessage('Login successful!');
-      setSnackbarSeverity('success');
-      setSnackbarOpen(true);
+      setToast(true);
 
       setTimeout(() => {
-      if (response.data.user.role === 'Admin') {
-        navigate('/admin');
-      } else if (response.data.user.role === 'Organizer') {
-        navigate('/dashboard');
-      } else {
-        navigate('/home');
-      }
-    }, 1500); 
+        if (response.data.user.role === 'Admin') {
+          navigate('/admin');
+        } else if (response.data.user.role === 'Organizer') {
+          navigate('/dashboard');
+        } else {
+          navigate('/home');
+        }
+      }, 1500);
 
     } catch (err) {
       console.error('Login error:', err);
-      const errorMessage = err.response?.data?.detail || 
-                          err.response?.data?.message || 
-                          'Login failed';
+      const errorMessage = err.response?.data?.detail ||
+        err.response?.data?.message ||
+        'Login failed';
       setError(errorMessage);
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
+      setToast(true); 
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-    setError('');
-    setSuccessMessage('');
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="p-8 bg-white rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-         <LoginForm 
+        <LoginForm
           onSubmit={handleSubmit}
           loading={loading}
         />
+
         <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={4000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert 
-            onClose={handleCloseSnackbar} 
-            severity={snackbarSeverity} 
-            sx={{ width: '100%' }}
-          >
-            {successMessage || error}
-          </Alert>
-        </Snackbar>
+          open={toast}
+          autoHideDuration={3000}
+          onClose={handleClose}
+          message={successMessage}
+          action={action}
+        />
+        <Snackbar
+          open={!!error}
+          autoHideDuration={3000}
+          onClose={handleClose}
+          message={error}
+          action={action}
+        />
       </div>
     </div>
   );
