@@ -128,8 +128,11 @@ def checkIfUserRegisterforEvent(request, event_id):
         # check if registration exists
         registration = Registration.objects.get(user_id=user, event_id=event)
         if registration.registration_status == 'Confirmed':
-            return Response({'registered': True}, status=200)
+            return Response({'registered': True}, status=status.HTTP_200_OK)
         else:
-            return Response({'registered': False}, status=200)
+            return Response({'registered': False}, status=status.HTTP_200_OK)
     except Registration.DoesNotExist:
-            return Response({'error': 'Registration not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'registered': False}, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(f"Error: {e}")
+        return Response({'error': f"An error has ocurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

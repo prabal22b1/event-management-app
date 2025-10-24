@@ -42,7 +42,7 @@ function EventDetailCard({ title, description, date, time, location, available_s
 
     const handleClose = () => {
         setError(null);
-        navigate('/home');
+        navigate('/dashboard');
     };
     const action = (
         <React.Fragment>
@@ -67,7 +67,7 @@ function EventDetailCard({ title, description, date, time, location, available_s
             });
             setRegistrationSuccess(true);
             setRegistrationStatus(true);
-            setSuccessMessage('Registered successfully! Redirecting to home page!');
+            setSuccessMessage('Registered successfully! Redirecting to dashboard!');
             setToast(true);
         } catch (err) {
             setError("You are already registered!");
@@ -84,7 +84,7 @@ function EventDetailCard({ title, description, date, time, location, available_s
                 }
             });
             setRegistrationStatus(false);
-            setSuccessMessage('Registration successfully cancelled! Redirecting to home page!');
+            setSuccessMessage('Registration successfully cancelled! Redirecting to dashboard!');
             setToast(true);
         } catch (err) {
             setError("Error cancelling registration!");
