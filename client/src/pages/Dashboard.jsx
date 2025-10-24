@@ -6,11 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import { Button } from '@mui/material';
+import { Pagination } from '@mui/material';
 
 const Dashboard = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 8;
 
   const navigate = useNavigate();
 
@@ -63,6 +66,15 @@ const Dashboard = () => {
     return <div className='error'>Error: {error}</div>;
   }
 
+  if (error) {
+    return <div>Error fetching events: {error.message}</div>;
+  }
+
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
+  const handlePageChange = (value) => setCurrentPage(value);
+
   return (
     <div>
       <div className="grid grid-cols-3 items-center px-5 mt-6 mb-6">
@@ -86,10 +98,10 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 pl-5 pr-5">
-        {events.length === 0 ? (
+        {currentEvents.length === 0 ? (
           <p>No {userRole === 'Attendee' ? 'Registrations' : 'Events'} found.</p>
         ) : (
-          events.map((event) => {
+          currentEvents.map((event) => {
             return userRole === 'Attendee' ? (
               <Link key={event.id} to={`/events/${event.id}`}>
                 <EventCard
@@ -116,6 +128,12 @@ const Dashboard = () => {
           })
         )}
       </div>
+      <Pagination
+        count={Math.ceil(currentEvents.length / eventsPerPage)}
+        page={currentPage}
+        onChange={handlePageChange}
+        style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}
+      />
     </div>
   )
 }
