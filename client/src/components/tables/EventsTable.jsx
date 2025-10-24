@@ -16,14 +16,29 @@ import {
     Chip,
     CircularProgress,
     Alert,
-    Box
+    Box,
+    TablePagination
 } from "@mui/material";
+
 import EventRegistrationsModal from "../EventRegistrationsModal";
 
 
 
 function EventsTable({ events }) {
-
+    // State to manage pagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(3);
+// Handle page change
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+// Handle rows per page change
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+// Calculate the users to display for current page
+  const eventsToDisplay = events.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     {/* Event Management Section */ }
     const [modalOpen, setModalOpen] = useState(false);
@@ -41,6 +56,7 @@ function EventsTable({ events }) {
             day: 'numeric'
         });
     };
+
     return (
         <div>
             <Box>
@@ -60,7 +76,7 @@ function EventsTable({ events }) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {events.map((event) => (
+                            {eventsToDisplay.map((event) => (
                                 <TableRow key={event.id} hover>
                                     <TableCell>{event.title}</TableCell>
                                     <TableCell>{formatDate(event.date)}</TableCell>
@@ -92,6 +108,15 @@ function EventsTable({ events }) {
                             ))}
                         </TableBody>
                     </Table>
+                    <TablePagination
+          component="div"
+          count={events.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[3, 10, 25]}
+        />
                 </TableContainer>
             </Box>
 
