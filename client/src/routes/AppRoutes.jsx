@@ -33,7 +33,7 @@ export default function AppRoutes() {
 					<Route path="/dashboard" element={<ProtectedRoute requiredRole={['Attendee', 'Organizer']}><><NavBar /><Dashboard /></></ProtectedRoute>} />
 					
 					<Route path="/admin" element={<ProtectedRoute requiredRole={['Admin']}><><NavBar /><AdminDashboard /></></ProtectedRoute>} />
-					
+
 					<Route path="/dashboard/edit-event/:id" element={<ProtectedRoute requiredRole={['Organizer']}><><NavBar /><EditEvent /></></ProtectedRoute>} />
 
 					<Route path="/dashboard/new-event" element={<ProtectedRoute requiredRole={['Organizer']}><><NavBar /><NewEvent /></></ProtectedRoute>} />
