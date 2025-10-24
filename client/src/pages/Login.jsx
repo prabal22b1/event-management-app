@@ -13,8 +13,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [toast, setToast] = useState(false);
-
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,11 +22,11 @@ const Login = () => {
   useEffect(() => {
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
-      setToast(true);
-      
+
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
+
   const handleClose = () => {
     setError(null);
     navigate('/home');
@@ -68,14 +68,15 @@ const Login = () => {
       localStorage.setItem('user_role', response.data.user.role);
 
       setSuccessMessage('Login successful!');
-      setToast(true);
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
 
       setTimeout(() => {
         if (response.data.user.role === 'Admin') {
           navigate('/admin');
         } else if (response.data.user.role === 'Organizer') {
           navigate('/dashboard');
-        } else {
+        } else if (response.data.user.role === 'Attendee') {
           navigate('/home');
         }
       }, 1500);
@@ -84,13 +85,15 @@ const Login = () => {
       console.error('Login error:', err);
       const errorMessage = err.response?.data?.detail ||
         err.response?.data?.message ||
-        'Login failed';
+        'Login failed, Please try again!';
       setError(errorMessage);
-      setToast(true); 
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -100,22 +103,30 @@ const Login = () => {
           onSubmit={handleSubmit}
           loading={loading}
         />
-
-        <Snackbar
-          open={toast}
-          autoHideDuration={3000}
-          onClose={handleClose}
-          message={successMessage}
-          action={action}
-        />
-        <Snackbar
-          open={!!error}
-          autoHideDuration={3000}
-          onClose={handleClose}
-          message={error}
-          action={action}
-        />
       </div>
+      <Snackbar
+        open={loading}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        message="Signing In...."
+        action={action}
+      />
+      <Snackbar
+        open={!!error}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        message={error}
+        action={action}
+      />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+        <Alert onClose={handleClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {successMessage || error}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

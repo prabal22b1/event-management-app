@@ -4,6 +4,9 @@ import axios from 'axios';
 import SignUpForm from '../components/forms/SignUpForm';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
+import React from 'react';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 const SignUp = () => {
   const [error, setError] = useState('');
@@ -17,7 +20,7 @@ const SignUp = () => {
     setLoading(true);
     setError('');
     setSuccess('');
-    
+
     try {
       const response = await axios.post(
         'http://localhost:8000/api/v1/users/register/',
@@ -34,9 +37,9 @@ const SignUp = () => {
       setSnackbarOpen(true);
 
       setTimeout(() => {
-        navigate('/login', { 
+        navigate('/login', {
           replace: true,
-          state: { 
+          state: {
             message: 'Registration successful! Please login with your credentials.'
           }
         });
@@ -44,11 +47,11 @@ const SignUp = () => {
 
     } catch (err) {
       console.error('Registration error:', err);
-      
+
       let errorMessage = 'Registration failed. Please try again.'
       if (err.response?.data) {
         const errorData = err.response.data;
-        
+
         if (typeof errorData === 'object') {
           if (errorData.username) {
             errorMessage = `Username: ${errorData.username[0]}`;
@@ -62,7 +65,7 @@ const SignUp = () => {
         } else {
           errorMessage = errorData;
         }
-      } 
+      }
       setError(errorMessage);
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
@@ -73,32 +76,65 @@ const SignUp = () => {
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
     setError('');
-    setSuccess(''); 
+    setSuccess('');
   }
+
+  const handleClose = () => {
+    setError(null);
+    navigate('/home');
+  };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
 
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="p-8 bg-white rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
-       <SignUpForm 
+        <SignUpForm
           onSubmit={handleSubmit}
           loading={loading}
         />
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={4000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Alert 
-            onClose={handleCloseSnackbar} 
-            severity={snackbarSeverity} 
-            sx={{ width: '100%' }}
-          >
-            {success || error}
-          </Alert>
-        </Snackbar>
       </div>
+      <Snackbar
+        open={loading}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        message="Signing Up...."
+        action={action}
+      />
+      <Snackbar
+        open={!!error}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        message={error}
+        action={action}
+      />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
+          {success || error}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
