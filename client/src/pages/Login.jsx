@@ -94,6 +94,12 @@ const Login = () => {
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+    setError('');
+    setSuccess('');
+  }
+
 
   return (
     <div className="flex justify-center items-center min-h-screen">
