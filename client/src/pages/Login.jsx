@@ -97,7 +97,7 @@ const Login = () => {
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
     setError('');
-    setSuccess('');
+    setSuccessMessage('');
   }
 
 
